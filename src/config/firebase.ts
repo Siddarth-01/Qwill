@@ -4,14 +4,22 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
-// Replace with your actual Firebase config
+// Using environment variables for security
 const firebaseConfig = {
-  apiKey: "AIzaSyBeBbUuMDgAe-3IG4RKKbZfe78GyZ2bJOQ",
-  authDomain: "twill-5656.firebaseapp.com",
-  projectId: "twill-5656",
-  storageBucket: "twill-5656.firebasestorage.app",
-  messagingSenderId: "37751943725",
-  appId: "1:37751943725:web:931fc4a9cb709ab0f43ea4",
+  apiKey:
+    import.meta.env.VITE_FIREBASE_API_KEY ||
+    "AIzaSyBeBbUuMDgAe-3IG4RKKbZfe78GyZ2bJOQ",
+  authDomain:
+    import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "twill-5656.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "twill-5656",
+  storageBucket:
+    import.meta.env.VITE_FIREBASE_STORAGE_BUCKET ||
+    "twill-5656.firebasestorage.app",
+  messagingSenderId:
+    import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "37751943725",
+  appId:
+    import.meta.env.VITE_FIREBASE_APP_ID ||
+    "1:37751943725:web:931fc4a9cb709ab0f43ea4",
 };
 
 // Initialize Firebase
