@@ -26,6 +26,7 @@ interface SemesterContextType {
   ) => Promise<void>;
   addCustomHoliday: (holiday: Omit<CustomHoliday, "id">) => Promise<void>;
   removeCustomHoliday: (holidayId: string) => Promise<void>;
+  toggleHomeDay: (date: Date) => Promise<void>; // New function for home days
   refreshSchedule: () => void;
 }
 
@@ -58,6 +59,7 @@ export const SemesterProvider: React.FC<SemesterProviderProps> = ({
   const [plannedSkipsData, setPlannedSkipsData] = useState<
     Record<string, boolean>
   >({});
+  const [homeDaysData, setHomeDaysData] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (!user) {
@@ -72,6 +74,7 @@ export const SemesterProvider: React.FC<SemesterProviderProps> = ({
     const semesterDocRef = doc(db, "semesters", user.uid);
     const attendanceDocRef = doc(db, "attendance", user.uid);
     const plannedSkipsDocRef = doc(db, "plannedSkips", user.uid);
+    const homeDaysDocRef = doc(db, "homeDays", user.uid);
 
     const unsubscribeSemester = onSnapshot(semesterDocRef, (doc) => {
       if (doc.exists()) {
@@ -104,10 +107,17 @@ export const SemesterProvider: React.FC<SemesterProviderProps> = ({
       }
     });
 
+    const unsubscribeHomeDays = onSnapshot(homeDaysDocRef, (doc) => {
+      if (doc.exists()) {
+        setHomeDaysData(doc.data().days || {});
+      }
+    });
+
     return () => {
       unsubscribeSemester();
       unsubscribeAttendance();
       unsubscribePlannedSkips();
+      unsubscribeHomeDays();
     };
   }, [user]);
 
@@ -115,7 +125,7 @@ export const SemesterProvider: React.FC<SemesterProviderProps> = ({
     if (semester) {
       refreshSchedule();
     }
-  }, [semester, attendanceData, plannedSkipsData]);
+  }, [semester, attendanceData, plannedSkipsData, homeDaysData]);
 
   const refreshSchedule = () => {
     if (!semester) return;
@@ -132,15 +142,24 @@ export const SemesterProvider: React.FC<SemesterProviderProps> = ({
       allHolidays
     );
 
-    // Apply attendance data and planned skips
-    const updatedSchedule = generatedSchedule.map((day) => ({
-      ...day,
-      classes: day.classes.map((cls) => ({
-        ...cls,
-        attended: attendanceData[cls.id] || false,
-        plannedSkip: plannedSkipsData[cls.id] || false,
-      })),
-    }));
+    // Apply attendance data, planned skips, and home days
+    const updatedSchedule = generatedSchedule.map((day) => {
+      // Use local date string to avoid timezone issues
+      const year = day.date.getFullYear();
+      const month = String(day.date.getMonth() + 1).padStart(2, "0");
+      const dayNum = String(day.date.getDate()).padStart(2, "0");
+      const dateKey = `${year}-${month}-${dayNum}`;
+
+      return {
+        ...day,
+        isHomeDay: homeDaysData[dateKey] || false,
+        classes: day.classes.map((cls) => ({
+          ...cls,
+          attended: attendanceData[cls.id] || false,
+          plannedSkip: plannedSkipsData[cls.id] || false,
+        })),
+      };
+    });
 
     setSchedule(updatedSchedule);
   };
@@ -275,6 +294,26 @@ export const SemesterProvider: React.FC<SemesterProviderProps> = ({
     await updateDoc(semesterDocRef, { customHolidays: updatedHolidays });
   };
 
+  const toggleHomeDay = async (date: Date) => {
+    if (!user) throw new Error("User not authenticated");
+
+    // Use local date string to avoid timezone issues
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const dateKey = `${year}-${month}-${day}`;
+
+    const isCurrentlyHomeDay = homeDaysData[dateKey] || false;
+
+    const homeDaysDocRef = doc(db, "homeDays", user.uid);
+    const newHomeDaysData = {
+      ...homeDaysData,
+      [dateKey]: !isCurrentlyHomeDay,
+    };
+
+    await setDoc(homeDaysDocRef, { days: newHomeDaysData }, { merge: true });
+  };
+
   const value = {
     semester,
     schedule,
@@ -285,6 +324,7 @@ export const SemesterProvider: React.FC<SemesterProviderProps> = ({
     updateMultiplePlannedSkips,
     addCustomHoliday,
     removeCustomHoliday,
+    toggleHomeDay,
     refreshSchedule,
   };
 

@@ -38,6 +38,7 @@ export interface DaySchedule {
   classes: ClassSession[];
   isHoliday: boolean;
   holidayName?: string;
+  isHomeDay?: boolean; // New field to track home days
 }
 
 export interface ClassSession {

@@ -134,18 +134,18 @@ const PlanSkipsTable: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Week Navigation - Always Available */}
-      <div className="flex items-center justify-between p-4 bg-gradient-to-r from-orange-50 to-red-50 rounded-xl border border-orange-100">
+      <div className="flex items-center justify-between p-3 md:p-4 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg md:rounded-xl border border-orange-100">
         <button
           onClick={goToPreviousWeek}
-          className="p-3 text-orange-600 hover:text-orange-700 hover:bg-white rounded-xl transition-all duration-200 shadow-sm"
+          className="p-2 md:p-3 text-orange-600 hover:text-orange-700 hover:bg-white rounded-lg md:rounded-xl transition-all duration-200 shadow-sm"
         >
-          <ChevronLeft className="w-5 h-5" />
+          <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
         </button>
 
         <div className="text-center">
-          <h3 className="font-bold text-gray-900 text-lg">
+          <h3 className="font-bold text-gray-900 text-sm md:text-lg">
             {(() => {
               const today = new Date();
               const startOfWeek = new Date(today);
@@ -161,29 +161,29 @@ const PlanSkipsTable: React.FC = () => {
           {currentWeekOffset !== 0 && (
             <button
               onClick={goToCurrentWeek}
-              className="text-sm text-orange-600 hover:text-orange-700 mt-1 px-3 py-1 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors"
+              className="text-xs md:text-sm text-orange-600 hover:text-orange-700 mt-1 px-2 md:px-3 py-1 bg-orange-50 hover:bg-orange-100 rounded-md md:rounded-lg transition-colors"
             >
-              Go to current week
+              Current week
             </button>
           )}
         </div>
 
         <button
           onClick={goToNextWeek}
-          className="p-3 text-orange-600 hover:text-orange-700 hover:bg-white rounded-xl transition-all duration-200 shadow-sm"
+          className="p-2 md:p-3 text-orange-600 hover:text-orange-700 hover:bg-white rounded-lg md:rounded-xl transition-all duration-200 shadow-sm"
         >
-          <ChevronRight className="w-5 h-5" />
+          <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
         </button>
       </div>
 
       {/* Content Area */}
       {weeklySchedule.length === 0 ? (
-        <div className="text-center py-12">
-          <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-500 text-lg font-medium">
+        <div className="text-center py-8 md:py-12">
+          <Calendar className="w-8 h-8 md:w-12 md:h-12 text-gray-400 mx-auto mb-3 md:mb-4" />
+          <p className="text-gray-500 text-base md:text-lg font-medium">
             No future classes in this week
           </p>
-          <p className="text-gray-400 text-sm mt-1">
+          <p className="text-gray-400 text-xs md:text-sm mt-1">
             Classes are either holidays, past, or not scheduled
           </p>
         </div>
@@ -191,12 +191,14 @@ const PlanSkipsTable: React.FC = () => {
         <>
           {/* Skip Impact Summary */}
           {getTotalPlannedSkips() > 0 && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg md:rounded-xl p-3 md:p-4">
               <div className="flex items-center gap-2 mb-2">
-                <AlertTriangle className="w-5 h-5 text-yellow-600" />
-                <h4 className="font-semibold text-yellow-800">Skip Impact</h4>
+                <AlertTriangle className="w-4 h-4 md:w-5 md:h-5 text-yellow-600" />
+                <h4 className="font-semibold text-yellow-800 text-sm md:text-base">
+                  Skip Impact
+                </h4>
               </div>
-              <p className="text-yellow-700 text-sm">
+              <p className="text-yellow-700 text-xs md:text-sm">
                 You're planning to skip{" "}
                 <strong>{getTotalPlannedSkips()}</strong> out of{" "}
                 <strong>{getTotalFutureClasses()}</strong> future classes
@@ -205,16 +207,16 @@ const PlanSkipsTable: React.FC = () => {
           )}
 
           {/* Daily Schedule */}
-          <div className="space-y-4 max-h-[32rem] overflow-y-auto custom-scrollbar">
+          <div className="space-y-3 md:space-y-4 max-h-[28rem] md:max-h-[32rem] overflow-y-auto custom-scrollbar">
             {weeklySchedule.map(({ date, schedule: daySchedule }) => (
               <div
                 key={date.toDateString()}
-                className="rounded-xl p-5 border-2 bg-white border-gray-100 hover:border-orange-200 transition-all duration-200 hover:shadow-md"
+                className="rounded-lg md:rounded-xl p-3 md:p-5 border-2 bg-white border-gray-100 hover:border-orange-200 transition-all duration-200 hover:shadow-md"
               >
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
+                <div className="flex items-center justify-between mb-3 md:mb-4">
+                  <div className="flex items-center gap-2 md:gap-3">
                     <div
-                      className={`w-3 h-3 rounded-full ${
+                      className={`w-2 h-2 md:w-3 md:h-3 rounded-full ${
                         daySchedule.classes.length > 0
                           ? daySchedule.classes.filter((c) => c.plannedSkip)
                               .length === 0
@@ -226,7 +228,7 @@ const PlanSkipsTable: React.FC = () => {
                           : "bg-blue-400"
                       }`}
                     ></div>
-                    <h4 className="font-semibold text-gray-900 text-lg">
+                    <h4 className="font-semibold text-gray-900 text-sm md:text-lg">
                       {date.toLocaleDateString("en-US", {
                         weekday: "long",
                         month: "short",
@@ -235,16 +237,16 @@ const PlanSkipsTable: React.FC = () => {
                     </h4>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-gray-400" />
-                    <span className="text-sm text-gray-500">
+                  <div className="flex items-center gap-1 md:gap-2">
+                    <Clock className="w-3 h-3 md:w-4 md:h-4 text-gray-400" />
+                    <span className="text-xs md:text-sm text-gray-500">
                       {daySchedule.classes.length} class
                       {daySchedule.classes.length !== 1 ? "es" : ""}
                     </span>
                     {daySchedule.classes.length > 0 && (
                       <button
                         onClick={() => handleSelectAllDay(daySchedule)}
-                        className="ml-2 p-2 text-orange-600 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition-all duration-200 group"
+                        className="ml-1 md:ml-2 p-1.5 md:p-2 text-orange-600 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition-all duration-200 group"
                         title={
                           daySchedule.classes.every((c: any) => c.plannedSkip)
                             ? "Unselect all classes"
@@ -254,9 +256,9 @@ const PlanSkipsTable: React.FC = () => {
                         {daySchedule.classes.every(
                           (c: any) => c.plannedSkip
                         ) ? (
-                          <CheckSquare className="w-5 h-5" />
+                          <CheckSquare className="w-4 h-4 md:w-5 md:h-5" />
                         ) : (
-                          <Square className="w-5 h-5" />
+                          <Square className="w-4 h-4 md:w-5 md:h-5" />
                         )}
                       </button>
                     )}
@@ -264,38 +266,38 @@ const PlanSkipsTable: React.FC = () => {
                 </div>
 
                 {daySchedule.classes.length === 0 ? (
-                  <div className="text-center py-6">
-                    <p className="text-gray-500 italic text-sm">
+                  <div className="text-center py-4 md:py-6">
+                    <p className="text-gray-500 italic text-xs md:text-sm">
                       📅 No classes scheduled
                     </p>
                   </div>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-2 md:space-y-3">
                     {daySchedule.classes.map((classSession) => (
                       <div
                         key={classSession.id}
-                        className={`flex items-center justify-between p-4 rounded-xl border transition-all duration-200 ${
+                        className={`flex items-center justify-between p-3 md:p-4 rounded-lg md:rounded-xl border transition-all duration-200 ${
                           classSession.plannedSkip
                             ? "bg-red-50/50 hover:bg-red-50 border-red-200"
                             : "bg-gray-50/50 hover:bg-gray-50 border-gray-200"
                         }`}
                       >
                         <div className="flex-1">
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2 md:gap-3">
                             <div
-                              className={`w-2 h-2 rounded-full ${
+                              className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${
                                 classSession.plannedSkip
                                   ? "bg-red-400"
                                   : "bg-gray-300"
                               }`}
                             ></div>
-                            <span className="font-semibold text-gray-900">
+                            <span className="font-semibold text-gray-900 text-sm md:text-base">
                               {classSession.subjectName}
                             </span>
-                            <span className="text-sm text-gray-500 bg-white px-2 py-1 rounded-lg">
+                            <span className="text-xs md:text-sm text-gray-500 bg-white px-1.5 md:px-2 py-0.5 md:py-1 rounded-md md:rounded-lg">
                               Slot {classSession.slotNumber}
                             </span>
-                            <span className="badge-info">
+                            <span className="badge-info text-xs md:text-sm px-1.5 md:px-3 py-0.5 md:py-1">
                               {classSession.duration}h
                             </span>
                           </div>
@@ -308,7 +310,7 @@ const PlanSkipsTable: React.FC = () => {
                               classSession.plannedSkip || false
                             )
                           }
-                          className={`flex items-center justify-center px-4 py-2 rounded-xl border-2 transition-all duration-200 text-sm font-medium ${
+                          className={`flex items-center justify-center px-3 md:px-4 py-1.5 md:py-2 rounded-lg md:rounded-xl border-2 transition-all duration-200 text-xs md:text-sm font-medium ${
                             classSession.plannedSkip
                               ? "bg-red-100 border-red-300 text-red-700 hover:bg-red-200"
                               : "bg-gray-100 border-gray-300 text-gray-600 hover:bg-gray-200"
@@ -322,8 +324,8 @@ const PlanSkipsTable: React.FC = () => {
                 )}
 
                 {daySchedule.classes.length > 0 && (
-                  <div className="mt-3 pt-3 border-t border-gray-200">
-                    <div className="flex justify-between text-sm">
+                  <div className="mt-2 md:mt-3 pt-2 md:pt-3 border-t border-gray-200">
+                    <div className="flex justify-between text-xs md:text-sm">
                       <span className="text-gray-600">
                         Planning to skip:{" "}
                         {

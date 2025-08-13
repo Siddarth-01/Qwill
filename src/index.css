@@ -225,6 +225,38 @@
   color: #b91c1c !important;
 }
 
+/* Planned skip styles for future dates */
+.calendar-tile-planned-attend {
+  background-color: #dbeafe !important;
+  border-color: #3b82f6 !important;
+  color: #1e40af !important;
+}
+
+.calendar-tile-partial-skip {
+  background-color: #f3e8ff !important;
+  border-color: #8b5cf6 !important;
+  color: #6d28d9 !important;
+}
+
+.calendar-tile-mostly-skip {
+  background-color: #fce7f3 !important;
+  border-color: #ec4899 !important;
+  color: #be185d !important;
+}
+
+.calendar-tile-full-skip {
+  background-color: #fee2e2 !important;
+  border-color: #dc2626 !important;
+  color: #991b1b !important;
+}
+
+.calendar-tile-today {
+  background-color: #e0f2fe !important;
+  border-color: #0891b2 !important;
+  color: #0e7490 !important;
+  font-weight: 700 !important;
+}
+
 /* Custom scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;

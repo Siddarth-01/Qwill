@@ -105,25 +105,29 @@ const Dashboard: React.FC = () => {
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-lg shadow-elegant border-b border-white/20 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-3">
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-2 rounded-xl">
-                  <BookOpen className="w-6 h-6 text-white" />
+          <div className="flex justify-between items-center py-3 md:py-4">
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className="flex items-center gap-2 md:gap-3">
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-1.5 md:p-2 rounded-lg md:rounded-xl">
+                  <BookOpen className="w-5 h-5 md:w-6 md:h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-gradient">Twill</h1>
-                  <p className="text-sm text-gray-500">Attendance Tracker</p>
+                  <h1 className="text-xl md:text-2xl font-bold text-gradient">
+                    Twill
+                  </h1>
+                  <p className="text-xs md:text-sm text-gray-500">
+                    Attendance Tracker
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4">
               {user?.photoURL && (
                 <img
                   src={user.photoURL}
                   alt={user.displayName}
-                  className="w-10 h-10 rounded-full ring-2 ring-blue-100"
+                  className="w-8 h-8 md:w-10 md:h-10 rounded-full ring-2 ring-blue-100"
                 />
               )}
               <div className="text-right hidden sm:block">
@@ -134,26 +138,26 @@ const Dashboard: React.FC = () => {
               </div>
               <button
                 onClick={handleSignOut}
-                className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-all duration-200"
+                className="p-1.5 md:p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg md:rounded-xl transition-all duration-200"
               >
-                <LogOut className="w-5 h-5" />
+                <LogOut className="w-4 h-4 md:w-5 md:h-5" />
               </button>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8 space-y-6 md:space-y-8">
         {/* Overall Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="card shadow-elegant hover:shadow-elegant-lg transform hover:-translate-y-1 transition-all duration-200">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+          <div className="card shadow-elegant hover:shadow-elegant-lg transform hover:-translate-y-1 transition-all duration-200 p-3 md:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 mb-1">
-                  Overall Attendance
+                <p className="text-xs md:text-sm font-medium text-gray-600 mb-1">
+                  Overall
                 </p>
                 <p
-                  className={`text-3xl font-bold ${
+                  className={`text-xl md:text-3xl font-bold ${
                     overallStats.percentage >= 75
                       ? "text-green-600"
                       : overallStats.percentage >= 60
@@ -164,12 +168,11 @@ const Dashboard: React.FC = () => {
                   {formatPercentage(overallStats.percentage)}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
-                  {overallStats.attendedUnits} of {overallStats.totalUnits}{" "}
-                  units
+                  {overallStats.attendedUnits} of {overallStats.totalUnits}
                 </p>
               </div>
               <div
-                className={`p-3 rounded-2xl ${
+                className={`p-2 md:p-3 rounded-xl md:rounded-2xl ${
                   overallStats.percentage >= 75
                     ? "bg-green-100"
                     : overallStats.percentage >= 60
@@ -178,7 +181,7 @@ const Dashboard: React.FC = () => {
                 }`}
               >
                 <TrendingUp
-                  className={`w-8 h-8 ${
+                  className={`w-6 h-6 md:w-8 md:h-8 ${
                     overallStats.percentage >= 75
                       ? "text-green-600"
                       : overallStats.percentage >= 60
@@ -190,102 +193,102 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="card shadow-elegant hover:shadow-elegant-lg transform hover:-translate-y-1 transition-all duration-200">
+          <div className="card shadow-elegant hover:shadow-elegant-lg transform hover:-translate-y-1 transition-all duration-200 p-3 md:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 mb-1">
-                  Classes Attended
+                <p className="text-xs md:text-sm font-medium text-gray-600 mb-1">
+                  Attended
                 </p>
-                <p className="text-3xl font-bold text-blue-600">
+                <p className="text-xl md:text-3xl font-bold text-blue-600">
                   {overallStats.attendedUnits}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
-                  out of {overallStats.totalUnits} total
+                  of {overallStats.totalUnits}
                 </p>
               </div>
-              <div className="bg-blue-100 p-3 rounded-2xl">
-                <User className="w-8 h-8 text-blue-600" />
+              <div className="bg-blue-100 p-2 md:p-3 rounded-xl md:rounded-2xl">
+                <User className="w-6 h-6 md:w-8 md:h-8 text-blue-600" />
               </div>
             </div>
           </div>
 
-          <div className="card shadow-elegant hover:shadow-elegant-lg transform hover:-translate-y-1 transition-all duration-200">
+          <div className="card shadow-elegant hover:shadow-elegant-lg transform hover:-translate-y-1 transition-all duration-200 p-3 md:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 mb-1">
-                  Required for 75%
+                <p className="text-xs md:text-sm font-medium text-gray-600 mb-1">
+                  Required
                 </p>
-                <p className="text-3xl font-bold text-orange-600">
+                <p className="text-xl md:text-3xl font-bold text-orange-600">
                   {overallStats.requiredUnits}
                 </p>
-                <p className="text-xs text-gray-500 mt-1">
-                  out of {overallStats.totalSemesterUnits} total units
-                </p>
+                <p className="text-xs text-gray-500 mt-1">for 75%</p>
               </div>
-              <div className="bg-orange-100 p-3 rounded-2xl">
-                <AlertCircle className="w-8 h-8 text-orange-600" />
+              <div className="bg-orange-100 p-2 md:p-3 rounded-xl md:rounded-2xl">
+                <AlertCircle className="w-6 h-6 md:w-8 md:h-8 text-orange-600" />
               </div>
             </div>
           </div>
 
-          <div className="card shadow-elegant hover:shadow-elegant-lg transform hover:-translate-y-1 transition-all duration-200">
+          <div className="card shadow-elegant hover:shadow-elegant-lg transform hover:-translate-y-1 transition-all duration-200 p-3 md:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 mb-1">
+                <p className="text-xs md:text-sm font-medium text-gray-600 mb-1">
                   Can Skip
                 </p>
-                <p className="text-3xl font-bold text-green-600">
+                <p className="text-xl md:text-3xl font-bold text-green-600">
                   {overallStats.unitsCanSkip}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
-                  more units to maintain 75%
+                  more units
                   {overallStats.plannedSkipUnits > 0 && (
                     <span className="block text-orange-500">
-                      ({overallStats.plannedSkipUnits} already planned)
+                      ({overallStats.plannedSkipUnits} planned)
                     </span>
                   )}
                 </p>
               </div>
-              <div className="bg-green-100 p-3 rounded-2xl">
-                <Calendar className="w-8 h-8 text-green-600" />
+              <div className="bg-green-100 p-2 md:p-3 rounded-xl md:rounded-2xl">
+                <Calendar className="w-6 h-6 md:w-8 md:h-8 text-green-600" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Calendar and Table */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-          <div className="card shadow-elegant">
-            <div className="card-header">
-              <h2 className="text-2xl font-bold text-gray-900">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-8">
+          <div className="card shadow-elegant p-4 md:p-6">
+            <div className="card-header pb-3 md:pb-4 mb-4 md:mb-6">
+              <h2 className="text-lg md:text-2xl font-bold text-gray-900">
                 Attendance Calendar
               </h2>
-              <p className="text-gray-600 mt-1">
+              <p className="text-gray-600 mt-1 text-sm md:text-base">
                 Visual overview of your attendance pattern
               </p>
             </div>
             <AttendanceCalendar />
           </div>
 
-          <div className="card shadow-elegant">
-            <div className="card-header">
-              <h2 className="text-2xl font-bold text-gray-900">
+          <div className="card shadow-elegant p-4 md:p-6">
+            <div className="card-header pb-3 md:pb-4 mb-4 md:mb-6">
+              <h2 className="text-lg md:text-2xl font-bold text-gray-900">
                 Weekly Schedule
               </h2>
-              <p className="text-gray-600 mt-1">Mark your daily attendance</p>
+              <p className="text-gray-600 mt-1 text-sm md:text-base">
+                Mark your daily attendance
+              </p>
             </div>
             <AttendanceTable />
           </div>
         </div>
 
         {/* Subject-wise Stats and New Section */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-          <div className="card shadow-elegant">
-            <div className="card-header">
-              <h2 className="text-2xl font-bold text-gray-900">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-8">
+          <div className="card shadow-elegant p-4 md:p-6">
+            <div className="card-header pb-3 md:pb-4 mb-4 md:mb-6">
+              <h2 className="text-lg md:text-2xl font-bold text-gray-900">
                 Subject-wise Attendance
               </h2>
-              <p className="text-gray-600 mt-1">
+              <p className="text-gray-600 mt-1 text-sm md:text-base">
                 Track your progress across all subjects
               </p>
             </div>
@@ -293,13 +296,13 @@ const Dashboard: React.FC = () => {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="text-left py-4 px-6 font-semibold text-gray-700 bg-gray-50 rounded-tl-lg">
+                    <th className="text-left py-3 md:py-4 px-3 md:px-6 font-semibold text-gray-700 bg-gray-50 rounded-tl-lg text-sm md:text-base">
                       Subject
                     </th>
-                    <th className="text-center py-4 px-6 font-semibold text-gray-700 bg-gray-50">
+                    <th className="text-center py-3 md:py-4 px-3 md:px-6 font-semibold text-gray-700 bg-gray-50 text-sm md:text-base">
                       Attendance
                     </th>
-                    <th className="text-center py-4 px-6 font-semibold text-gray-700 bg-gray-50 rounded-tr-lg">
+                    <th className="text-center py-3 md:py-4 px-3 md:px-6 font-semibold text-gray-700 bg-gray-50 rounded-tr-lg text-sm md:text-base">
                       Units
                     </th>
                   </tr>
@@ -310,10 +313,10 @@ const Dashboard: React.FC = () => {
                       key={subject.subjectId}
                       className="hover:bg-gray-50/50 transition-colors duration-200"
                     >
-                      <td className="py-4 px-6">
-                        <div className="flex items-center gap-3">
+                      <td className="py-3 md:py-4 px-3 md:px-6">
+                        <div className="flex items-center gap-2 md:gap-3">
                           <div
-                            className={`w-3 h-3 rounded-full ${
+                            className={`w-2 h-2 md:w-3 md:h-3 rounded-full ${
                               subject.stats.percentage >= 75
                                 ? "bg-green-400"
                                 : subject.stats.percentage >= 60
@@ -321,15 +324,15 @@ const Dashboard: React.FC = () => {
                                 : "bg-red-400"
                             }`}
                           ></div>
-                          <span className="font-semibold text-gray-900">
+                          <span className="font-semibold text-gray-900 text-sm md:text-base">
                             {subject.subjectName}
                           </span>
                         </div>
                       </td>
-                      <td className="text-center py-4 px-6">
+                      <td className="text-center py-3 md:py-4 px-3 md:px-6">
                         <div className="flex flex-col items-center gap-1">
                           <span
-                            className={`text-lg font-bold ${
+                            className={`text-base md:text-lg font-bold ${
                               subject.stats.percentage >= 75
                                 ? "text-green-600"
                                 : subject.stats.percentage >= 60
@@ -339,9 +342,9 @@ const Dashboard: React.FC = () => {
                           >
                             {formatPercentage(subject.stats.percentage)}
                           </span>
-                          <div className="w-16 bg-gray-200 rounded-full h-2">
+                          <div className="w-12 md:w-16 bg-gray-200 rounded-full h-1.5 md:h-2">
                             <div
-                              className={`h-2 rounded-full transition-all duration-300 ${
+                              className={`h-1.5 md:h-2 rounded-full transition-all duration-300 ${
                                 subject.stats.percentage >= 75
                                   ? "bg-green-400"
                                   : subject.stats.percentage >= 60
@@ -358,7 +361,7 @@ const Dashboard: React.FC = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="text-center py-4 px-6">
+                      <td className="text-center py-3 md:py-4 px-3 md:px-6">
                         <div className="text-sm">
                           <span className="font-semibold text-gray-900">
                             {subject.stats.attendedUnits}
@@ -377,10 +380,12 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* Plan to Skip Section */}
-          <div className="card shadow-elegant">
-            <div className="card-header">
-              <h2 className="text-2xl font-bold text-gray-900">Plan to Skip</h2>
-              <p className="text-gray-600 mt-1">
+          <div className="card shadow-elegant p-4 md:p-6">
+            <div className="card-header pb-3 md:pb-4 mb-4 md:mb-6">
+              <h2 className="text-lg md:text-2xl font-bold text-gray-900">
+                Plan to Skip
+              </h2>
+              <p className="text-gray-600 mt-1 text-sm md:text-base">
                 Mark future classes you're planning to skip
               </p>
             </div>

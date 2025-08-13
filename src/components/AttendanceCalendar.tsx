@@ -6,7 +6,7 @@ type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 const AttendanceCalendar: React.FC = () => {
-  const { semester, schedule } = useSemester();
+  const { semester, schedule, toggleHomeDay } = useSemester();
   const [value, setValue] = useState<Value>(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
@@ -24,6 +24,15 @@ const AttendanceCalendar: React.FC = () => {
     if (daySchedule && daySchedule.classes.length > 0) {
       console.log(`Clicked on ${date.toDateString()}`, daySchedule);
       // You could add logic here to show a modal or navigate to detailed view
+    }
+  };
+
+  const handleDateRightClick = async (date: Date, event: React.MouseEvent) => {
+    event.preventDefault(); // Prevent context menu
+    try {
+      await toggleHomeDay(date);
+    } catch (error) {
+      console.error("Failed to toggle home day:", error);
     }
   };
 
@@ -47,20 +56,65 @@ const AttendanceCalendar: React.FC = () => {
 
     if (daySchedule.classes.length === 0) return baseClass;
 
-    const attendedClasses = daySchedule.classes.filter(
-      (cls) => cls.attended
-    ).length;
-    const totalClasses = daySchedule.classes.length;
-    const attendanceRate = attendedClasses / totalClasses;
+    // Check if this is a past date or future date
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tileDate = new Date(date);
+    tileDate.setHours(0, 0, 0, 0);
+    const isPastDate = tileDate < today;
+    const isFutureDate = tileDate > today;
 
-    if (attendanceRate === 1) {
-      return baseClass + "calendar-tile-full-attendance";
-    } else if (attendanceRate >= 0.75) {
-      return baseClass + "calendar-tile-good-attendance";
-    } else if (attendanceRate > 0) {
-      return baseClass + "calendar-tile-partial-attendance";
+    if (isPastDate) {
+      // For past dates, show actual attendance
+      const attendedClasses = daySchedule.classes.filter(
+        (cls) => cls.attended
+      ).length;
+      const totalClasses = daySchedule.classes.length;
+      const attendanceRate = attendedClasses / totalClasses;
+
+      if (attendanceRate === 1) {
+        return baseClass + "calendar-tile-full-attendance";
+      } else if (attendanceRate >= 0.75) {
+        return baseClass + "calendar-tile-good-attendance";
+      } else if (attendanceRate > 0) {
+        return baseClass + "calendar-tile-partial-attendance";
+      } else {
+        return baseClass + "calendar-tile-no-attendance";
+      }
+    } else if (isFutureDate) {
+      // For future dates, show planned skips
+      const plannedSkipClasses = daySchedule.classes.filter(
+        (cls) => cls.plannedSkip
+      ).length;
+      const totalClasses = daySchedule.classes.length;
+      const skipRate = plannedSkipClasses / totalClasses;
+
+      if (skipRate === 0) {
+        return baseClass + "calendar-tile-planned-attend";
+      } else if (skipRate < 0.5) {
+        return baseClass + "calendar-tile-partial-skip";
+      } else if (skipRate < 1) {
+        return baseClass + "calendar-tile-mostly-skip";
+      } else {
+        return baseClass + "calendar-tile-full-skip";
+      }
     } else {
-      return baseClass + "calendar-tile-no-attendance";
+      // Today - show actual attendance status like past dates
+      const attendedClasses = daySchedule.classes.filter(
+        (cls) => cls.attended
+      ).length;
+      const totalClasses = daySchedule.classes.length;
+      const attendanceRate = attendedClasses / totalClasses;
+
+      if (attendanceRate === 1) {
+        return baseClass + "calendar-tile-full-attendance";
+      } else if (attendanceRate >= 0.75) {
+        return baseClass + "calendar-tile-good-attendance";
+      } else if (attendanceRate > 0) {
+        return baseClass + "calendar-tile-partial-attendance";
+      } else {
+        return baseClass + "calendar-tile-no-attendance";
+      }
     }
   };
 
@@ -69,30 +123,88 @@ const AttendanceCalendar: React.FC = () => {
       (day) => day.date.toDateString() === date.toDateString()
     );
 
+    // Show home day tag if it's marked as a home day
+    const homeTag = daySchedule?.isHomeDay ? (
+      <div className="absolute top-0 right-0 w-0 h-0 border-l-[12px] md:border-l-[16px] border-l-transparent border-t-[12px] md:border-t-[16px] border-t-orange-500 shadow-sm"></div>
+    ) : null;
+
     if (
       !daySchedule ||
       daySchedule.isHoliday ||
       daySchedule.classes.length === 0
     ) {
-      return null;
+      return homeTag;
     }
 
-    const attendedClasses = daySchedule.classes.filter(
-      (cls) => cls.attended
-    ).length;
-    const totalClasses = daySchedule.classes.length;
+    // Check if this is a past date or future date
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tileDate = new Date(date);
+    tileDate.setHours(0, 0, 0, 0);
+    const isPastDate = tileDate < today;
+    const isFutureDate = tileDate > today;
 
-    return (
-      <div className="text-xs mt-1">
-        <div className="font-semibold">
-          {attendedClasses}/{totalClasses}
-        </div>
-      </div>
-    );
+    if (isPastDate) {
+      // For past dates, show actual attendance
+      const attendedClasses = daySchedule.classes.filter(
+        (cls) => cls.attended
+      ).length;
+      const totalClasses = daySchedule.classes.length;
+
+      return (
+        <>
+          {homeTag}
+          <div className="text-xs mt-0.5">
+            <div className="font-semibold text-xs">
+              {attendedClasses}/{totalClasses}
+            </div>
+          </div>
+        </>
+      );
+    } else if (isFutureDate) {
+      // For future dates, show planned skips
+      const plannedSkipClasses = daySchedule.classes.filter(
+        (cls) => cls.plannedSkip
+      ).length;
+      const totalClasses = daySchedule.classes.length;
+
+      return (
+        <>
+          {homeTag}
+          <div className="text-xs mt-0.5">
+            <div className="font-semibold text-xs">
+              {plannedSkipClasses > 0
+                ? `${plannedSkipClasses}/${totalClasses}`
+                : `${totalClasses}`}
+            </div>
+            {plannedSkipClasses > 0 && (
+              <div className="text-xs opacity-75">skip</div>
+            )}
+          </div>
+        </>
+      );
+    } else {
+      // Today
+      const attendedClasses = daySchedule.classes.filter(
+        (cls) => cls.attended
+      ).length;
+      const totalClasses = daySchedule.classes.length;
+
+      return (
+        <>
+          {homeTag}
+          <div className="text-xs mt-0.5">
+            <div className="font-semibold text-xs">
+              {attendedClasses}/{totalClasses}
+            </div>
+          </div>
+        </>
+      );
+    }
   };
 
   return (
-    <div className="attendance-calendar">
+    <div className="attendance-calendar px-2 md:px-0">
       {/* Temporarily hide custom header to debug
       <div className="calendar-weekdays-header mb-2">
         <div className="grid grid-cols-7 text-center text-sm font-semibold text-gray-600 uppercase tracking-wide">
@@ -109,6 +221,7 @@ const AttendanceCalendar: React.FC = () => {
 
       <CustomCalendar
         onChange={handleDateClick}
+        onContextMenu={handleDateRightClick}
         value={value as Date}
         tileClassName={getTileClassName}
         tileContent={getTileContent}
@@ -116,38 +229,63 @@ const AttendanceCalendar: React.FC = () => {
         maxDate={semester.endDate}
       />
 
-      <div className="mt-6 p-4 bg-gray-50 rounded-xl">
-        <h3 className="font-semibold text-gray-800 text-sm mb-3 flex items-center gap-2">
-          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+      <div className="mt-4 p-3 md:p-4 bg-gray-50 rounded-lg md:rounded-xl">
+        <h3 className="font-semibold text-gray-800 text-xs md:text-sm mb-2 md:mb-3 flex items-center gap-2">
+          <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-blue-500 rounded-full"></div>
           Legend
         </h3>
-        <div className="grid grid-cols-2 gap-3 text-xs">
-          <div className="flex items-center gap-2 p-2 bg-white rounded-lg">
-            <div className="w-4 h-4 bg-gradient-to-br from-green-400 to-green-500 rounded shadow-sm"></div>
-            <span className="font-medium text-gray-700">Full Attendance</span>
-          </div>
-          <div className="flex items-center gap-2 p-2 bg-white rounded-lg">
-            <div className="w-4 h-4 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded shadow-sm"></div>
-            <span className="font-medium text-gray-700">75%+ Attendance</span>
-          </div>
-          <div className="flex items-center gap-2 p-2 bg-white rounded-lg">
-            <div className="w-4 h-4 bg-gradient-to-br from-orange-400 to-orange-500 rounded shadow-sm"></div>
-            <span className="font-medium text-gray-700">
-              Partial Attendance
+        <div className="grid grid-cols-2 gap-1.5 md:gap-3 text-xs mb-3 md:mb-4">
+          <div className="flex items-center gap-1.5 md:gap-2 p-1.5 md:p-2 bg-white rounded-md md:rounded-lg">
+            <div className="w-3 h-3 md:w-4 md:h-4 bg-gradient-to-br from-green-400 to-green-500 rounded shadow-sm"></div>
+            <span className="font-medium text-gray-700 text-xs md:text-sm">
+              Full
             </span>
           </div>
-          <div className="flex items-center gap-2 p-2 bg-white rounded-lg">
-            <div className="w-4 h-4 bg-gradient-to-br from-red-400 to-red-500 rounded shadow-sm"></div>
-            <span className="font-medium text-gray-700">No Attendance</span>
+          <div className="flex items-center gap-1.5 md:gap-2 p-1.5 md:p-2 bg-white rounded-md md:rounded-lg">
+            <div className="w-3 h-3 md:w-4 md:h-4 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded shadow-sm"></div>
+            <span className="font-medium text-gray-700 text-xs md:text-sm">
+              75%+
+            </span>
           </div>
-          <div className="flex items-center gap-2 p-2 bg-white rounded-lg">
-            <div className="w-4 h-4 bg-gradient-to-br from-gray-300 to-gray-400 rounded shadow-sm"></div>
-            <span className="font-medium text-gray-700">Holiday</span>
+          <div className="flex items-center gap-1.5 md:gap-2 p-1.5 md:p-2 bg-white rounded-md md:rounded-lg">
+            <div className="w-3 h-3 md:w-4 md:h-4 bg-gradient-to-br from-orange-400 to-orange-500 rounded shadow-sm"></div>
+            <span className="font-medium text-gray-700 text-xs md:text-sm">
+              Partial
+            </span>
           </div>
-          <div className="flex items-center gap-2 p-2 bg-white rounded-lg">
-            <div className="w-4 h-4 bg-gradient-to-br from-blue-400 to-blue-500 rounded shadow-sm ring-2 ring-blue-200"></div>
-            <span className="font-medium text-gray-700">Today</span>
+          <div className="flex items-center gap-1.5 md:gap-2 p-1.5 md:p-2 bg-white rounded-md md:rounded-lg">
+            <div className="w-3 h-3 md:w-4 md:h-4 bg-gradient-to-br from-red-400 to-red-500 rounded shadow-sm"></div>
+            <span className="font-medium text-gray-700 text-xs md:text-sm">
+              None
+            </span>
           </div>
+
+          <div className="flex items-center gap-1.5 md:gap-2 p-1.5 md:p-2 bg-white rounded-md md:rounded-lg">
+            <div className="w-3 h-3 md:w-4 md:h-4 bg-gradient-to-br from-red-600 to-red-700 rounded shadow-sm"></div>
+            <span className="font-medium text-gray-700 text-xs md:text-sm">
+              Skip All
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5 md:gap-2 p-1.5 md:p-2 bg-white rounded-md md:rounded-lg">
+            <div className="w-3 h-3 md:w-4 md:h-4 bg-gradient-to-br from-gray-300 to-gray-400 rounded shadow-sm"></div>
+            <span className="font-medium text-gray-700 text-xs md:text-sm">
+              Holiday
+            </span>
+          </div>
+        </div>
+
+        <div className="border-t border-gray-200 pt-2 md:pt-3">
+          <div className="flex items-center gap-1.5 md:gap-2 p-1.5 md:p-2 bg-orange-50 rounded-md md:rounded-lg">
+            <div className="relative w-3 h-3 md:w-4 md:h-4 bg-white border border-gray-200 rounded">
+              <div className="absolute top-0 right-0 w-0 h-0 border-l-[8px] md:border-l-[10px] border-l-transparent border-t-[8px] md:border-t-[10px] border-t-orange-500"></div>
+            </div>
+            <span className="font-medium text-gray-700 text-xs md:text-sm">
+              Home Day
+            </span>
+          </div>
+          <p className="text-xs text-gray-600 mt-1.5 md:mt-2 px-1 md:px-2">
+            💡 <strong>Tip:</strong> Right-click to mark as "Home Day"
+          </p>
         </div>
       </div>
     </div>

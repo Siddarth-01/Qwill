@@ -129,54 +129,54 @@ const AttendanceTable: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Week Navigation */}
-      <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+      <div className="flex items-center justify-between p-3 md:p-4 bg-gray-50 rounded-lg md:rounded-xl">
         <button
           onClick={goToPreviousWeek}
-          className="p-3 text-gray-500 hover:text-gray-700 hover:bg-white rounded-xl transition-all duration-200 shadow-sm"
+          className="p-2 md:p-3 text-gray-500 hover:text-gray-700 hover:bg-white rounded-lg md:rounded-xl transition-all duration-200 shadow-sm"
         >
-          <ChevronLeft className="w-5 h-5" />
+          <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
         </button>
 
         <div className="text-center">
-          <h3 className="font-bold text-gray-900 text-lg">
+          <h3 className="font-bold text-gray-900 text-sm md:text-lg">
             {formatDate(weeklySchedule[0]?.date)} -{" "}
             {formatDate(weeklySchedule[6]?.date)}
           </h3>
           {currentWeekOffset !== 0 && (
             <button
               onClick={goToCurrentWeek}
-              className="text-sm text-blue-600 hover:text-blue-700 mt-1 px-3 py-1 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+              className="text-xs md:text-sm text-blue-600 hover:text-blue-700 mt-1 px-2 md:px-3 py-1 bg-blue-50 hover:bg-blue-100 rounded-md md:rounded-lg transition-colors"
             >
-              Go to current week
+              Current week
             </button>
           )}
         </div>
 
         <button
           onClick={goToNextWeek}
-          className="p-3 text-gray-500 hover:text-gray-700 hover:bg-white rounded-xl transition-all duration-200 shadow-sm"
+          className="p-2 md:p-3 text-gray-500 hover:text-gray-700 hover:bg-white rounded-lg md:rounded-xl transition-all duration-200 shadow-sm"
         >
-          <ChevronRight className="w-5 h-5" />
+          <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
         </button>
       </div>
 
       {/* Daily Schedule */}
-      <div className="space-y-4 max-h-[32rem] overflow-y-auto custom-scrollbar">
+      <div className="space-y-3 md:space-y-4 max-h-[28rem] md:max-h-[32rem] overflow-y-auto custom-scrollbar">
         {weeklySchedule.map(({ date, schedule: daySchedule }) => (
           <div
             key={date.toDateString()}
-            className={`rounded-xl p-5 border-2 transition-all duration-200 hover:shadow-md ${
+            className={`rounded-lg md:rounded-xl p-3 md:p-5 border-2 transition-all duration-200 hover:shadow-md ${
               daySchedule.isHoliday
                 ? "bg-gray-50/50 border-gray-200"
                 : "bg-white border-gray-100 hover:border-blue-200"
             }`}
           >
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
+            <div className="flex items-center justify-between mb-3 md:mb-4">
+              <div className="flex items-center gap-2 md:gap-3">
                 <div
-                  className={`w-3 h-3 rounded-full ${
+                  className={`w-2 h-2 md:w-3 md:h-3 rounded-full ${
                     daySchedule.isHoliday
                       ? "bg-gray-400"
                       : daySchedule.classes.length > 0
@@ -190,7 +190,7 @@ const AttendanceTable: React.FC = () => {
                       : "bg-blue-400"
                   }`}
                 ></div>
-                <h4 className="font-semibold text-gray-900 text-lg">
+                <h4 className="font-semibold text-gray-900 text-sm md:text-lg">
                   {date.toLocaleDateString("en-US", {
                     weekday: "long",
                     month: "short",
@@ -199,66 +199,67 @@ const AttendanceTable: React.FC = () => {
                 </h4>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 md:gap-2">
                 {daySchedule.isHoliday ? (
                   <>
-                    <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full font-medium">
+                    <span className="text-xs md:text-sm text-gray-500 bg-gray-100 px-2 md:px-3 py-1 rounded-full font-medium">
                       {daySchedule.holidayName || "Holiday"}
                     </span>
                     {isCustomHoliday(date) && (
                       <button
                         onClick={() => handleRemoveHoliday(date)}
-                        className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all duration-200"
+                        className="p-1.5 md:p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all duration-200"
                         title="Remove custom holiday"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
                       </button>
                     )}
                   </>
                 ) : (
                   <button
                     onClick={() => handleMarkAsHoliday(date)}
-                    className="flex items-center gap-2 px-3 py-1 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                    className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 text-xs md:text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-all duration-200"
                     title="Mark as custom holiday"
                   >
-                    <Calendar className="w-4 h-4" />
-                    <span>Mark Holiday</span>
+                    <Calendar className="w-3 h-3 md:w-4 md:h-4" />
+                    <span className="hidden sm:inline">Mark Holiday</span>
+                    <span className="sm:hidden">Holiday</span>
                   </button>
                 )}
               </div>
             </div>
 
             {daySchedule.classes.length === 0 ? (
-              <div className="text-center py-6">
-                <p className="text-gray-500 italic text-sm">
+              <div className="text-center py-4 md:py-6">
+                <p className="text-gray-500 italic text-xs md:text-sm">
                   {daySchedule.isHoliday
                     ? "🎉 No classes - Holiday"
                     : "📅 No classes scheduled"}
                 </p>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2 md:space-y-3">
                 {daySchedule.classes.map((classSession) => (
                   <div
                     key={classSession.id}
-                    className="flex items-center justify-between p-4 bg-gray-50/50 hover:bg-gray-50 rounded-xl border transition-all duration-200"
+                    className="flex items-center justify-between p-3 md:p-4 bg-gray-50/50 hover:bg-gray-50 rounded-lg md:rounded-xl border transition-all duration-200"
                   >
                     <div className="flex-1">
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2 md:gap-3">
                         <div
-                          className={`w-2 h-2 rounded-full ${
+                          className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${
                             classSession.attended
                               ? "bg-green-400"
                               : "bg-gray-300"
                           }`}
                         ></div>
-                        <span className="font-semibold text-gray-900">
+                        <span className="font-semibold text-gray-900 text-sm md:text-base">
                           {classSession.subjectName}
                         </span>
-                        <span className="text-sm text-gray-500 bg-white px-2 py-1 rounded-lg">
+                        <span className="text-xs md:text-sm text-gray-500 bg-white px-1.5 md:px-2 py-0.5 md:py-1 rounded-md md:rounded-lg">
                           Slot {classSession.slotNumber}
                         </span>
-                        <span className="badge-info">
+                        <span className="badge-info text-xs md:text-sm px-1.5 md:px-3 py-0.5 md:py-1">
                           {classSession.duration}h
                         </span>
                       </div>
@@ -272,7 +273,7 @@ const AttendanceTable: React.FC = () => {
                         )
                       }
                       disabled={!classSession.canEdit}
-                      className={`flex items-center justify-center w-10 h-10 rounded-xl border-2 transition-all duration-200 ${
+                      className={`flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl border-2 transition-all duration-200 ${
                         classSession.attended
                           ? "bg-green-100 border-green-300 text-green-700 hover:bg-green-200"
                           : "bg-gray-100 border-gray-300 text-gray-500 hover:bg-gray-200"
@@ -283,9 +284,9 @@ const AttendanceTable: React.FC = () => {
                       }`}
                     >
                       {classSession.attended ? (
-                        <Check className="w-4 h-4" />
+                        <Check className="w-3 h-3 md:w-4 md:h-4" />
                       ) : (
-                        <X className="w-4 h-4" />
+                        <X className="w-3 h-3 md:w-4 md:h-4" />
                       )}
                     </button>
                   </div>
@@ -294,8 +295,8 @@ const AttendanceTable: React.FC = () => {
             )}
 
             {daySchedule.classes.length > 0 && (
-              <div className="mt-3 pt-3 border-t border-gray-200">
-                <div className="flex justify-between text-sm">
+              <div className="mt-2 md:mt-3 pt-2 md:pt-3 border-t border-gray-200">
+                <div className="flex justify-between text-xs md:text-sm">
                   <span className="text-gray-600">
                     Attended:{" "}
                     {daySchedule.classes.filter((c) => c.attended).length} /{" "}
@@ -331,13 +332,13 @@ const AttendanceTable: React.FC = () => {
 
       {/* Custom Holiday Modal */}
       {showHolidayModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4 shadow-2xl">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg md:rounded-xl p-4 md:p-6 w-full max-w-md mx-4 shadow-2xl">
+            <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-3 md:mb-4">
               Mark as Custom Holiday
             </h3>
 
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Date
@@ -361,7 +362,7 @@ const AttendanceTable: React.FC = () => {
                   value={holidayName}
                   onChange={(e) => setHolidayName(e.target.value)}
                   placeholder="e.g., Diwali, Christmas, Personal Day"
-                  className="input-field"
+                  className="input-field text-sm md:text-base"
                   required
                 />
               </div>
@@ -374,22 +375,22 @@ const AttendanceTable: React.FC = () => {
                   value={holidayDescription}
                   onChange={(e) => setHolidayDescription(e.target.value)}
                   placeholder="Additional details about this holiday"
-                  className="input-field resize-none h-20"
+                  className="input-field resize-none h-16 md:h-20 text-sm md:text-base"
                 />
               </div>
             </div>
 
-            <div className="flex gap-3 mt-6">
+            <div className="flex gap-2 md:gap-3 mt-4 md:mt-6">
               <button
                 onClick={() => setShowHolidayModal(false)}
-                className="btn-secondary flex-1"
+                className="btn-secondary flex-1 text-sm md:text-base py-2 md:py-3"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSaveHoliday}
                 disabled={!holidayName.trim()}
-                className="btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base py-2 md:py-3"
               >
                 Save Holiday
               </button>

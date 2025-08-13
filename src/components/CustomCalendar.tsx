@@ -8,6 +8,7 @@ interface CustomCalendarProps {
   tileContent?: (props: { date: Date }) => React.ReactNode;
   value?: Date;
   onChange?: (date: Date) => void;
+  onContextMenu?: (date: Date, event: React.MouseEvent) => void;
 }
 
 const CustomCalendar: React.FC<CustomCalendarProps> = ({
@@ -17,6 +18,7 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
   tileContent,
   value,
   onChange,
+  onContextMenu,
 }) => {
   const [currentDate, setCurrentDate] = useState(value || new Date());
 
@@ -48,7 +50,7 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
 
     // Add empty cells for days before the first day of the month
     for (let i = 0; i < firstDay; i++) {
-      days.push(<div key={`empty-${i}`} className="p-3"></div>);
+      days.push(<div key={`empty-${i}`} className="p-1 md:p-3"></div>);
     }
 
     // Add days of the month
@@ -67,7 +69,7 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
       days.push(
         <div
           key={day}
-          className={`p-3 border border-gray-200 cursor-pointer hover:bg-blue-50 active:bg-blue-100 transition-all duration-150 min-h-[80px] flex flex-col items-center justify-start ${className} ${
+          className={`p-1 md:p-2 lg:p-3 border border-gray-200 cursor-pointer hover:bg-blue-50 active:bg-blue-100 transition-all duration-150 min-h-[60px] md:min-h-[70px] lg:min-h-[80px] flex flex-col items-center justify-start relative ${className} ${
             isDisabled ? "opacity-50 cursor-not-allowed" : ""
           }`}
           onClick={(e) => {
@@ -78,13 +80,22 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
               onChange(date);
             }
           }}
+          onContextMenu={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!isDisabled && onContextMenu) {
+              onContextMenu(date, e);
+            }
+          }}
           onMouseDown={(e) => {
             // Prevent any potential interference
             e.preventDefault();
           }}
         >
-          <span className="text-sm font-medium pointer-events-none">{day}</span>
-          <div className="pointer-events-none">{content}</div>
+          <span className="text-xs md:text-sm font-medium pointer-events-none">
+            {day}
+          </span>
+          <div className="pointer-events-none text-xs">{content}</div>
         </div>
       );
     }
@@ -97,14 +108,14 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200">
+      <div className="flex items-center justify-between p-2 md:p-4 border-b border-gray-200">
         <button
           onClick={() => navigateMonth("prev")}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-1.5 md:p-2 hover:bg-gray-100 rounded-lg transition-colors"
         >
-          <ChevronLeft size={20} />
+          <ChevronLeft size={18} className="md:w-5 md:h-5" />
         </button>
-        <h2 className="text-lg font-semibold">
+        <h2 className="text-base md:text-lg font-semibold">
           {currentDate.toLocaleDateString("en-US", {
             year: "numeric",
             month: "long",
@@ -112,9 +123,9 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
         </h2>
         <button
           onClick={() => navigateMonth("next")}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-1.5 md:p-2 hover:bg-gray-100 rounded-lg transition-colors"
         >
-          <ChevronRight size={20} />
+          <ChevronRight size={18} className="md:w-5 md:h-5" />
         </button>
       </div>
 
@@ -123,7 +134,7 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
         {weekdays.map((day) => (
           <div
             key={day}
-            className="p-3 text-center text-sm font-semibold text-gray-600 uppercase tracking-wide"
+            className="p-1.5 md:p-3 text-center text-xs md:text-sm font-semibold text-gray-600 uppercase tracking-wide"
           >
             {day}
           </div>
