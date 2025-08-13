@@ -26,11 +26,20 @@ const Dashboard: React.FC = () => {
   }, [schedule]);
 
   const overallStats = useMemo(() => {
-    // Fixed current stats as of today (August 10, 2025)
-    const attendedUnits = 108;
-    const totalUnitsToDate = 113; // Classes until today
+    // Calculate actual stats from current attendance data
+    const classesToDate = allClasses; // All classes that can be edited (up to today)
+    const attendedClasses = classesToDate.filter((cls) => cls.attended);
 
-    // Calculate total semester units (all classes from July 14 to November 16)
+    const attendedUnits = attendedClasses.reduce(
+      (sum, cls) => sum + cls.duration,
+      0
+    );
+    const totalUnitsToDate = classesToDate.reduce(
+      (sum, cls) => sum + cls.duration,
+      0
+    );
+
+    // Calculate total semester units (all classes from start to end)
     const allSemesterClasses = schedule.flatMap((day) => day.classes);
     const totalSemesterUnits = allSemesterClasses.reduce(
       (sum, cls) => sum + cls.duration,
@@ -43,16 +52,16 @@ const Dashboard: React.FC = () => {
       .filter((cls) => cls.plannedSkip)
       .reduce((sum, cls) => sum + cls.duration, 0);
 
-    const percentage = (attendedUnits / totalUnitsToDate) * 100;
+    const percentage =
+      totalUnitsToDate > 0 ? (attendedUnits / totalUnitsToDate) * 100 : 0;
     const requiredUnits = Math.ceil((totalSemesterUnits * 75) / 100); // Based on full semester
 
     // Calculate remaining units that can be skipped, considering planned skips
-    const effectiveAttendedUnits = attendedUnits; // Already attended classes
     const plannedAttendUnits = futureClasses
       .filter((cls) => !cls.plannedSkip)
       .reduce((sum, cls) => sum + cls.duration, 0); // Future classes not marked to skip
 
-    const projectedTotalAttended = effectiveAttendedUnits + plannedAttendUnits;
+    const projectedTotalAttended = attendedUnits + plannedAttendUnits;
     const unitsCanSkip = Math.max(0, projectedTotalAttended - requiredUnits);
 
     return {
@@ -64,56 +73,20 @@ const Dashboard: React.FC = () => {
       unitsCanSkip,
       plannedSkipUnits,
     };
-  }, [schedule]);
+  }, [schedule, allClasses]);
 
   const subjectStats = useMemo(() => {
     if (!semester) return [];
 
-    // Fixed target ratios as provided by user
-    const targetRatios = {
-      DAA: { attended: 12, total: 12 },
-      OOPJ: { attended: 11, total: 13 },
-      DBMS: { attended: 12, total: 14 },
-      MFCS: { attended: 15, total: 15 },
-      EEA: { attended: 10, total: 11 },
-      ES: { attended: 4, total: 4 },
-      FP: { attended: 8, total: 8 },
-      "PP LAB": { attended: 12, total: 12 },
-      "DBMS LAB": { attended: 12, total: 12 },
-      "OOPJ LAB": { attended: 12, total: 12 },
-    };
-
     return semester.subjects.map((subject) => {
-      const target = targetRatios[subject.name as keyof typeof targetRatios];
-
-      if (target) {
-        // Use fixed ratios
-        const percentage = (target.attended / target.total) * 100;
-        const requiredUnits = Math.ceil((target.total * 75) / 100);
-        const unitsCanSkip = Math.max(0, target.attended - requiredUnits);
-
-        return {
-          subjectId: subject.id,
-          subjectName: subject.name,
-          stats: {
-            totalUnits: target.total,
-            attendedUnits: target.attended,
-            percentage,
-            requiredUnits,
-            unitsCanSkip,
-          },
-        };
-      } else {
-        // Fallback to normal calculation for subjects not in the fixed list
-        const subjectClasses = allClasses.filter(
-          (cls) => cls.subjectId === subject.id
-        );
-        return {
-          subjectId: subject.id,
-          subjectName: subject.name,
-          stats: calculateAttendanceStats(subjectClasses),
-        };
-      }
+      const subjectClasses = allClasses.filter(
+        (cls) => cls.subjectId === subject.id
+      );
+      return {
+        subjectId: subject.id,
+        subjectName: subject.name,
+        stats: calculateAttendanceStats(subjectClasses),
+      };
     });
   }, [allClasses, semester]);
 

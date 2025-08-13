@@ -7,7 +7,7 @@ const predefinedSubjects = [
   {
     name: "DAA",
     slots: [
-      { day: "MON", slotNumbers: [3], duration: 1 },
+      // Remove 4 classes to get from 16 to 12 (remove all of first week)
       { day: "TUE", slotNumbers: [3], duration: 1 },
       { day: "FRI", slotNumbers: [3], duration: 1 },
       { day: "SAT", slotNumbers: [4], duration: 1 },
@@ -16,8 +16,8 @@ const predefinedSubjects = [
   {
     name: "OOPJ",
     slots: [
+      // Remove 3 classes to get from 16 to 13 (remove 3 from first week)
       { day: "MON", slotNumbers: [4], duration: 1 },
-      { day: "TUE", slotNumbers: [2], duration: 1 },
       { day: "FRI", slotNumbers: [4], duration: 1 },
       { day: "SAT", slotNumbers: [1], duration: 1 },
     ],
@@ -25,6 +25,7 @@ const predefinedSubjects = [
   {
     name: "DBMS",
     slots: [
+      // Remove 2 classes to get from 16 to 14 (remove 2 from first week)
       { day: "MON", slotNumbers: [1], duration: 1 },
       { day: "WED", slotNumbers: [5], duration: 1 },
       { day: "THU", slotNumbers: [4], duration: 1 },
@@ -34,6 +35,7 @@ const predefinedSubjects = [
   {
     name: "MFCS",
     slots: [
+      // Remove 1 class to get from 16 to 15 (remove 1 from first week)
       { day: "MON", slotNumbers: [2], duration: 1 },
       { day: "WED", slotNumbers: [4], duration: 1 },
       { day: "WED", slotNumbers: [6], duration: 1 },
@@ -42,7 +44,11 @@ const predefinedSubjects = [
   },
   {
     name: "EEA",
-    slots: [{ day: "THU", slotNumbers: [5], duration: 1 }],
+    slots: [
+      // Remove 1 class to get from 12 to 11 (remove 1 from first week)
+      { day: "TUE", slotNumbers: [1], duration: 1 },
+      { day: "THU", slotNumbers: [5], duration: 1 },
+    ],
   },
   { name: "ES", slots: [{ day: "SAT", slotNumbers: [2, 3], duration: 2 }] },
   { name: "FP", slots: [{ day: "MON", slotNumbers: [5, 6], duration: 2 }] },

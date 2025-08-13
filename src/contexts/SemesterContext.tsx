@@ -9,7 +9,10 @@ import {
 import { db } from "../config/firebase";
 import { useAuth } from "./AuthContext";
 import type { Semester, CustomHoliday, DaySchedule } from "../types";
-import { generateScheduleForPeriod } from "../utils/attendanceUtils";
+import {
+  generateScheduleForPeriod,
+  generateInitialAttendanceData,
+} from "../utils/attendanceUtils";
 
 interface SemesterContextType {
   semester: Semester | null;
@@ -153,6 +156,42 @@ export const SemesterProvider: React.FC<SemesterProviderProps> = ({
       holidays: semesterData.holidays,
       customHolidays: semesterData.customHolidays,
     });
+
+    // Generate initial attendance data based on target ratios
+    const allHolidays = [
+      ...semesterData.holidays,
+      ...semesterData.customHolidays.map((h) => h.date),
+    ];
+
+    const initialSchedule = generateScheduleForPeriod(
+      semesterData.startDate,
+      semesterData.endDate,
+      semesterData.subjects,
+      allHolidays
+    );
+
+    // Define target ratios to match current attendance state
+    const targetRatios = {
+      DAA: { attended: 12, total: 12 },
+      OOPJ: { attended: 11, total: 13 },
+      DBMS: { attended: 12, total: 14 },
+      MFCS: { attended: 15, total: 15 },
+      EEA: { attended: 10, total: 11 },
+      ES: { attended: 4, total: 4 },
+      FP: { attended: 8, total: 8 },
+      "PP LAB": { attended: 12, total: 12 },
+      "DBMS LAB": { attended: 12, total: 12 },
+      "OOPJ LAB": { attended: 12, total: 12 },
+    };
+
+    const initialAttendance = generateInitialAttendanceData(
+      initialSchedule,
+      targetRatios
+    );
+
+    // Set initial attendance data
+    const attendanceDocRef = doc(db, "attendance", user.uid);
+    await setDoc(attendanceDocRef, { classes: initialAttendance });
   };
 
   const updateAttendance = async (classId: string, attended: boolean) => {

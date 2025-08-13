@@ -25,7 +25,10 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
   };
 
   const getFirstDayOfMonth = (date: Date) => {
-    return new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+    const day = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+    // Convert from Sunday-based (0-6) to Monday-based (0-6)
+    // Sunday becomes 6, Monday becomes 0, etc.
+    return day === 0 ? 6 : day - 1;
   };
 
   const navigateMonth = (direction: "prev" | "next") => {
@@ -64,17 +67,24 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
       days.push(
         <div
           key={day}
-          className={`p-3 border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors min-h-[80px] flex flex-col items-center justify-start ${className} ${
+          className={`p-3 border border-gray-200 cursor-pointer hover:bg-blue-50 active:bg-blue-100 transition-all duration-150 min-h-[80px] flex flex-col items-center justify-start ${className} ${
             isDisabled ? "opacity-50 cursor-not-allowed" : ""
           }`}
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
             if (!isDisabled && onChange) {
+              console.log(`Calendar tile clicked: ${date.toDateString()}`);
               onChange(date);
             }
           }}
+          onMouseDown={(e) => {
+            // Prevent any potential interference
+            e.preventDefault();
+          }}
         >
-          <span className="text-sm font-medium">{day}</span>
-          {content}
+          <span className="text-sm font-medium pointer-events-none">{day}</span>
+          <div className="pointer-events-none">{content}</div>
         </div>
       );
     }
@@ -82,7 +92,7 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
     return days;
   };
 
-  const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200">

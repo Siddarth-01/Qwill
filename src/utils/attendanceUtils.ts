@@ -140,6 +140,56 @@ export const generateScheduleForPeriod = (
   return schedule;
 };
 
+export const generateInitialAttendanceData = (
+  schedule: DaySchedule[],
+  targetRatios: Record<string, { attended: number; total: number }>
+): Record<string, boolean> => {
+  const attendanceData: Record<string, boolean> = {};
+
+  // Get all classes until today (August 10, 2025)
+  const today = new Date("2025-08-10");
+  const classesToDate = schedule
+    .filter((day) => day.date <= today)
+    .flatMap((day) => day.classes)
+    .sort(
+      (a, b) =>
+        new Date(a.id.split("-")[1]).getTime() -
+        new Date(b.id.split("-")[1]).getTime()
+    );
+
+  // Group classes by subject
+  const classesBySubject: Record<string, typeof classesToDate> = {};
+  classesToDate.forEach((cls) => {
+    const subjectName = cls.subjectName;
+    if (!classesBySubject[subjectName]) {
+      classesBySubject[subjectName] = [];
+    }
+    classesBySubject[subjectName].push(cls);
+  });
+
+  // For each subject, mark attendance based on target ratios
+  Object.entries(classesBySubject).forEach(([subjectName, classes]) => {
+    const target = targetRatios[subjectName];
+    if (target && classes.length > 0) {
+      // Calculate how many classes to mark as attended
+      const totalClassesToDate = classes.length;
+      const targetAttended = Math.min(target.attended, totalClassesToDate);
+
+      // Mark the first 'targetAttended' classes as attended
+      classes.forEach((cls, index) => {
+        attendanceData[cls.id] = index < targetAttended;
+      });
+    } else {
+      // If no target specified, mark all as attended
+      classes.forEach((cls) => {
+        attendanceData[cls.id] = true;
+      });
+    }
+  });
+
+  return attendanceData;
+};
+
 export const formatDate = (date: Date): string => {
   return date.toLocaleDateString("en-US", {
     year: "numeric",

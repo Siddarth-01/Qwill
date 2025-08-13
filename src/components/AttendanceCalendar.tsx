@@ -8,21 +8,44 @@ type Value = ValuePiece | [ValuePiece, ValuePiece];
 const AttendanceCalendar: React.FC = () => {
   const { semester, schedule } = useSemester();
   const [value, setValue] = useState<Value>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   if (!semester) return null;
+
+  const handleDateClick = (date: Date) => {
+    setValue(date);
+    setSelectedDate(date);
+
+    // Find the schedule for this date
+    const daySchedule = schedule.find(
+      (day) => day.date.toDateString() === date.toDateString()
+    );
+
+    if (daySchedule && daySchedule.classes.length > 0) {
+      console.log(`Clicked on ${date.toDateString()}`, daySchedule);
+      // You could add logic here to show a modal or navigate to detailed view
+    }
+  };
 
   const getTileClassName = ({ date }: { date: Date }) => {
     const daySchedule = schedule.find(
       (day) => day.date.toDateString() === date.toDateString()
     );
 
-    if (!daySchedule) return "";
+    let baseClass = "";
 
-    if (daySchedule.isHoliday) {
-      return "calendar-tile-holiday";
+    // Add selected date styling
+    if (selectedDate && selectedDate.toDateString() === date.toDateString()) {
+      baseClass += " ring-2 ring-blue-500 ring-offset-2 ";
     }
 
-    if (daySchedule.classes.length === 0) return "";
+    if (!daySchedule) return baseClass;
+
+    if (daySchedule.isHoliday) {
+      return baseClass + "calendar-tile-holiday";
+    }
+
+    if (daySchedule.classes.length === 0) return baseClass;
 
     const attendedClasses = daySchedule.classes.filter(
       (cls) => cls.attended
@@ -31,13 +54,13 @@ const AttendanceCalendar: React.FC = () => {
     const attendanceRate = attendedClasses / totalClasses;
 
     if (attendanceRate === 1) {
-      return "calendar-tile-full-attendance";
+      return baseClass + "calendar-tile-full-attendance";
     } else if (attendanceRate >= 0.75) {
-      return "calendar-tile-good-attendance";
+      return baseClass + "calendar-tile-good-attendance";
     } else if (attendanceRate > 0) {
-      return "calendar-tile-partial-attendance";
+      return baseClass + "calendar-tile-partial-attendance";
     } else {
-      return "calendar-tile-no-attendance";
+      return baseClass + "calendar-tile-no-attendance";
     }
   };
 
@@ -73,19 +96,19 @@ const AttendanceCalendar: React.FC = () => {
       {/* Temporarily hide custom header to debug
       <div className="calendar-weekdays-header mb-2">
         <div className="grid grid-cols-7 text-center text-sm font-semibold text-gray-600 uppercase tracking-wide">
-          <div className="py-2">Sun</div>
           <div className="py-2">Mon</div>
           <div className="py-2">Tue</div>
           <div className="py-2">Wed</div>
           <div className="py-2">Thu</div>
           <div className="py-2">Fri</div>
           <div className="py-2">Sat</div>
+          <div className="py-2">Sun</div>
         </div>
       </div>
       */}
 
       <CustomCalendar
-        onChange={(date) => setValue(date)}
+        onChange={handleDateClick}
         value={value as Date}
         tileClassName={getTileClassName}
         tileContent={getTileContent}
