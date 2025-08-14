@@ -2,6 +2,7 @@ import React from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { BookOpen, Calendar, TrendingUp } from "lucide-react";
 
+// Login component for Google authentication
 const Login: React.FC = () => {
   const { signInWithGoogle, loading } = useAuth();
 
