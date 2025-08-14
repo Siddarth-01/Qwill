@@ -1,6 +1,6 @@
 import React from "react";
 import { useAuth } from "../contexts/AuthContext";
-import { Chrome, BookOpen, Calendar, TrendingUp } from "lucide-react";
+import { BookOpen, Calendar, TrendingUp } from "lucide-react";
 
 const Login: React.FC = () => {
   const { signInWithGoogle, loading } = useAuth();
@@ -114,7 +114,6 @@ const Login: React.FC = () => {
                   disabled={loading}
                   className="btn-primary w-full text-lg py-4 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
                 >
-                  <Chrome className="w-6 h-6" />
                   {loading ? (
                     <>
                       <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
