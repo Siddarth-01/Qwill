@@ -56,9 +56,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signInWithGoogle = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
+      console.log("Attempting Google sign in...");
+      console.log("Auth object:", auth);
+      console.log("Google provider:", googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
+      console.log("Sign in successful:", result);
     } catch (error) {
       console.error("Error signing in with Google:", error);
+      console.error("Error code:", (error as any)?.code);
+      console.error("Error message:", (error as any)?.message);
       throw error;
     }
   };

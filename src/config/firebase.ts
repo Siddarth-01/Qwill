@@ -22,12 +22,31 @@ const firebaseConfig = {
     "1:37751943725:web:931fc4a9cb709ab0f43ea4",
 };
 
+// Debug: Log Firebase config (only in development)
+if (import.meta.env.DEV) {
+  console.log("Firebase config:", firebaseConfig);
+  console.log("Environment variables:", {
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY ? "Set" : "Using fallback",
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN
+      ? "Set"
+      : "Using fallback",
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID
+      ? "Set"
+      : "Using fallback",
+  });
+}
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase Authentication and get a reference to the service
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
+
+// Configure Google Auth Provider
+googleProvider.setCustomParameters({
+  prompt: "select_account",
+});
 
 // Initialize Cloud Firestore and get a reference to the service
 export const db = getFirestore(app);
