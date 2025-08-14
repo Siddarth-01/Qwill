@@ -1,12 +1,5 @@
 import React, { useMemo } from "react";
-import {
-  Calendar,
-  User,
-  LogOut,
-  TrendingUp,
-  AlertCircle,
-  BookOpen,
-} from "lucide-react";
+import { Calendar, User, LogOut, TrendingUp, AlertCircle } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { useSemester } from "../contexts/SemesterContext";
 import {
@@ -16,6 +9,7 @@ import {
 import AttendanceCalendar from "./AttendanceCalendar";
 import AttendanceTable from "./AttendanceTable";
 import PlanSkipsTable from "./PlanSkipsTable";
+import TwillLogo from "./TwillLogo";
 
 const Dashboard: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -109,7 +103,7 @@ const Dashboard: React.FC = () => {
             <div className="flex items-center gap-3 md:gap-4">
               <div className="flex items-center gap-2 md:gap-3">
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-1.5 md:p-2 rounded-lg md:rounded-xl">
-                  <BookOpen className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                  <TwillLogo />
                 </div>
                 <div>
                   <h1 className="text-xl md:text-2xl font-bold text-gradient">
