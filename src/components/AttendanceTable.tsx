@@ -19,6 +19,7 @@ const AttendanceTable: React.FC = () => {
     semester,
   } = useSemester();
   const [currentWeekOffset, setCurrentWeekOffset] = useState(0);
+  const [selectedDayIndex, setSelectedDayIndex] = useState(0); // Track which day of the week is selected
   const [showHolidayModal, setShowHolidayModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [holidayName, setHolidayName] = useState("");
@@ -129,25 +130,25 @@ const AttendanceTable: React.FC = () => {
   };
 
   return (
-    <div className="space-y-4 md:space-y-6">
-      {/* Week Navigation */}
-      <div className="flex items-center justify-between p-3 md:p-4 bg-gray-50 rounded-lg md:rounded-xl">
+    <div className="space-y-4 md:space-y-4">
+      {/* Week Navigation - Always Available */}
+      <div className="flex items-center justify-between p-3 md:p-2 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg md:rounded-lg border border-blue-100">
         <button
           onClick={goToPreviousWeek}
-          className="p-2 md:p-3 text-gray-500 hover:text-gray-700 hover:bg-white rounded-lg md:rounded-xl transition-all duration-200 shadow-sm"
+          className="p-2 md:p-1.5 text-blue-600 hover:text-blue-700 hover:bg-white rounded-lg md:rounded-lg transition-all duration-200 shadow-sm"
         >
-          <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
+          <ChevronLeft className="w-4 h-4 md:w-3.5 md:h-3.5" />
         </button>
 
         <div className="text-center">
-          <h3 className="font-bold text-gray-900 text-sm md:text-lg">
+          <h3 className="font-bold text-gray-900 text-sm md:text-sm">
             {formatDate(weeklySchedule[0]?.date)} -{" "}
             {formatDate(weeklySchedule[6]?.date)}
           </h3>
           {currentWeekOffset !== 0 && (
             <button
               onClick={goToCurrentWeek}
-              className="text-xs md:text-sm text-blue-600 hover:text-blue-700 mt-1 px-2 md:px-3 py-1 bg-blue-50 hover:bg-blue-100 rounded-md md:rounded-lg transition-colors"
+              className="text-xs md:text-xs text-blue-600 hover:text-blue-700 mt-1 px-2 md:px-2 py-1 bg-blue-50 hover:bg-blue-100 rounded-md md:rounded-md transition-colors"
             >
               Current week
             </button>
@@ -156,168 +157,251 @@ const AttendanceTable: React.FC = () => {
 
         <button
           onClick={goToNextWeek}
-          className="p-2 md:p-3 text-gray-500 hover:text-gray-700 hover:bg-white rounded-lg md:rounded-xl transition-all duration-200 shadow-sm"
+          className="p-2 md:p-1.5 text-gray-500 hover:text-gray-700 hover:bg-white rounded-lg md:rounded-lg transition-all duration-200 shadow-sm"
         >
-          <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
+          <ChevronRight className="w-4 h-4 md:w-3.5 md:h-3.5" />
         </button>
       </div>
 
-      {/* Daily Schedule */}
-      <div className="space-y-3 md:space-y-4 max-h-[28rem] md:max-h-[32rem] overflow-y-auto custom-scrollbar">
-        {weeklySchedule.map(({ date, schedule: daySchedule }) => (
+      {/* Date Navigation Bar */}
+      <div className="grid grid-cols-7 gap-1 md:gap-0.5 p-2 md:p-1.5 bg-gray-50 rounded-lg md:rounded-lg">
+        {weeklySchedule.map(({ date, schedule: daySchedule }, index) => {
+          const isSelected = index === selectedDayIndex;
+          const isToday = date.toDateString() === new Date().toDateString();
+          const hasClasses = daySchedule.classes.length > 0;
+          const attendanceRate = hasClasses
+            ? daySchedule.classes.filter((c) => c.attended).length /
+              daySchedule.classes.length
+            : 0;
+
+          return (
+            <button
+              key={date.toDateString()}
+              onClick={() => setSelectedDayIndex(index)}
+              className={`p-2 md:p-1.5 rounded-lg md:rounded-md text-center transition-all duration-200 ${
+                isSelected
+                  ? "bg-blue-600 text-white shadow-lg scale-105"
+                  : "bg-white hover:bg-blue-50 text-gray-700 hover:text-blue-600 shadow-sm hover:shadow-md"
+              }`}
+            >
+              <div className="text-xs md:text-xs font-medium">
+                {date.toLocaleDateString("en-US", { weekday: "short" })}
+              </div>
+              <div className="text-xs md:text-xs font-bold">
+                {date.getDate()}
+              </div>
+              {/* Status indicator */}
+              <div
+                className={`w-1.5 h-1.5 md:w-1 md:h-1 rounded-full mx-auto mt-1 ${
+                  daySchedule.isHoliday
+                    ? "bg-gray-400"
+                    : !hasClasses
+                    ? "bg-blue-300"
+                    : attendanceRate === 1
+                    ? isSelected
+                      ? "bg-green-200"
+                      : "bg-green-400"
+                    : attendanceRate > 0
+                    ? isSelected
+                      ? "bg-yellow-200"
+                      : "bg-yellow-400"
+                    : isSelected
+                    ? "bg-red-200"
+                    : "bg-red-400"
+                }`}
+              ></div>
+              {isToday && (
+                <div className="text-xs text-blue-600 font-medium mt-1">
+                  Today
+                </div>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Selected Day Schedule */}
+      <div className="min-h-[20rem] md:min-h-[18rem]">
+        {weeklySchedule[selectedDayIndex] && (
           <div
-            key={date.toDateString()}
-            className={`rounded-lg md:rounded-xl p-3 md:p-5 border-2 transition-all duration-200 hover:shadow-md ${
-              daySchedule.isHoliday
+            className={`rounded-lg md:rounded-md p-4 md:p-3 border-2 transition-all duration-200 ${
+              weeklySchedule[selectedDayIndex].schedule.isHoliday
                 ? "bg-gray-50/50 border-gray-200"
-                : "bg-white border-gray-100 hover:border-blue-200"
+                : "bg-white border-gray-100"
             }`}
           >
-            <div className="flex items-center justify-between mb-3 md:mb-4">
-              <div className="flex items-center gap-2 md:gap-3">
+            <div className="flex items-center justify-between mb-4 md:mb-3">
+              <div className="flex items-center gap-3 md:gap-2">
                 <div
-                  className={`w-2 h-2 md:w-3 md:h-3 rounded-full ${
-                    daySchedule.isHoliday
+                  className={`w-3 h-3 md:w-2.5 md:h-2.5 rounded-full ${
+                    weeklySchedule[selectedDayIndex].schedule.isHoliday
                       ? "bg-gray-400"
-                      : daySchedule.classes.length > 0
-                      ? daySchedule.classes.filter((c) => c.attended).length ===
-                        daySchedule.classes.length
+                      : weeklySchedule[selectedDayIndex].schedule.classes
+                          .length > 0
+                      ? weeklySchedule[
+                          selectedDayIndex
+                        ].schedule.classes.filter((c) => c.attended).length ===
+                        weeklySchedule[selectedDayIndex].schedule.classes.length
                         ? "bg-green-400"
-                        : daySchedule.classes.filter((c) => c.attended).length >
+                        : weeklySchedule[
+                            selectedDayIndex
+                          ].schedule.classes.filter((c) => c.attended).length >
                           0
                         ? "bg-yellow-400"
                         : "bg-red-400"
                       : "bg-blue-400"
                   }`}
                 ></div>
-                <h4 className="font-semibold text-gray-900 text-sm md:text-lg">
-                  {date.toLocaleDateString("en-US", {
-                    weekday: "long",
-                    month: "short",
-                    day: "numeric",
-                  })}
+                <h4 className="font-bold text-gray-900 text-lg md:text-base">
+                  {weeklySchedule[selectedDayIndex].date.toLocaleDateString(
+                    "en-US",
+                    {
+                      weekday: "long",
+                      month: "long",
+                      day: "numeric",
+                    }
+                  )}
                 </h4>
               </div>
 
-              <div className="flex items-center gap-1 md:gap-2">
-                {daySchedule.isHoliday ? (
+              <div className="flex items-center gap-2 md:gap-1.5">
+                {weeklySchedule[selectedDayIndex].schedule.isHoliday ? (
                   <>
-                    <span className="text-xs md:text-sm text-gray-500 bg-gray-100 px-2 md:px-3 py-1 rounded-full font-medium">
-                      {daySchedule.holidayName || "Holiday"}
+                    <span className="text-sm md:text-xs text-gray-500 bg-gray-100 px-3 md:px-2 py-1.5 md:py-1 rounded-full font-medium">
+                      {weeklySchedule[selectedDayIndex].schedule.holidayName ||
+                        "Holiday"}
                     </span>
-                    {isCustomHoliday(date) && (
+                    {isCustomHoliday(weeklySchedule[selectedDayIndex].date) && (
                       <button
-                        onClick={() => handleRemoveHoliday(date)}
-                        className="p-1.5 md:p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all duration-200"
+                        onClick={() =>
+                          handleRemoveHoliday(
+                            weeklySchedule[selectedDayIndex].date
+                          )
+                        }
+                        className="p-2 md:p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all duration-200"
                         title="Remove custom holiday"
                       >
-                        <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
+                        <Trash2 className="w-4 h-4 md:w-3.5 md:h-3.5" />
                       </button>
                     )}
                   </>
                 ) : (
                   <button
-                    onClick={() => handleMarkAsHoliday(date)}
-                    className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 text-xs md:text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                    onClick={() =>
+                      handleMarkAsHoliday(weeklySchedule[selectedDayIndex].date)
+                    }
+                    className="flex items-center gap-2 md:gap-1.5 px-3 md:px-2 py-1.5 md:py-1 text-sm md:text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-all duration-200"
                     title="Mark as custom holiday"
                   >
-                    <Calendar className="w-3 h-3 md:w-4 md:h-4" />
-                    <span className="hidden sm:inline">Mark Holiday</span>
-                    <span className="sm:hidden">Holiday</span>
+                    <Calendar className="w-4 h-4 md:w-3.5 md:h-3.5" />
+                    <span>Mark Holiday</span>
                   </button>
                 )}
               </div>
             </div>
 
-            {daySchedule.classes.length === 0 ? (
-              <div className="text-center py-4 md:py-6">
-                <p className="text-gray-500 italic text-xs md:text-sm">
-                  {daySchedule.isHoliday
+            {weeklySchedule[selectedDayIndex].schedule.classes.length === 0 ? (
+              <div className="text-center py-8 md:py-6">
+                <p className="text-gray-500 italic text-base md:text-sm">
+                  {weeklySchedule[selectedDayIndex].schedule.isHoliday
                     ? "🎉 No classes - Holiday"
                     : "📅 No classes scheduled"}
                 </p>
               </div>
             ) : (
-              <div className="space-y-2 md:space-y-3">
-                {daySchedule.classes.map((classSession) => (
-                  <div
-                    key={classSession.id}
-                    className="flex items-center justify-between p-3 md:p-4 bg-gray-50/50 hover:bg-gray-50 rounded-lg md:rounded-xl border transition-all duration-200"
-                  >
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 md:gap-3">
-                        <div
-                          className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${
-                            classSession.attended
-                              ? "bg-green-400"
-                              : "bg-gray-300"
-                          }`}
-                        ></div>
-                        <span className="font-semibold text-gray-900 text-sm md:text-base">
-                          {classSession.subjectName}
-                        </span>
-                        <span className="text-xs md:text-sm text-gray-500 bg-white px-1.5 md:px-2 py-0.5 md:py-1 rounded-md md:rounded-lg">
-                          Slot {classSession.slotNumber}
-                        </span>
-                        <span className="badge-info text-xs md:text-sm px-1.5 md:px-3 py-0.5 md:py-1">
-                          {classSession.duration}h
-                        </span>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() =>
-                        handleAttendanceToggle(
-                          classSession.id,
-                          classSession.attended
-                        )
-                      }
-                      disabled={!classSession.canEdit}
-                      className={`flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl border-2 transition-all duration-200 ${
-                        classSession.attended
-                          ? "bg-green-100 border-green-300 text-green-700 hover:bg-green-200"
-                          : "bg-gray-100 border-gray-300 text-gray-500 hover:bg-gray-200"
-                      } ${
-                        classSession.canEdit
-                          ? "hover:border-green-400 cursor-pointer hover:scale-105 hover:shadow-md"
-                          : "opacity-50 cursor-not-allowed"
-                      }`}
+              <div className="space-y-3 md:space-y-2">
+                {weeklySchedule[selectedDayIndex].schedule.classes.map(
+                  (classSession) => (
+                    <div
+                      key={classSession.id}
+                      className="flex items-center justify-between p-4 md:p-3 bg-gray-50/50 hover:bg-gray-50 rounded-lg md:rounded-md border transition-all duration-200 hover:shadow-sm"
                     >
-                      {classSession.attended ? (
-                        <Check className="w-3 h-3 md:w-4 md:h-4" />
-                      ) : (
-                        <X className="w-3 h-3 md:w-4 md:h-4" />
-                      )}
-                    </button>
-                  </div>
-                ))}
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 md:gap-2">
+                          <div
+                            className={`w-2 h-2 md:w-1.5 md:h-1.5 rounded-full ${
+                              classSession.attended
+                                ? "bg-green-400"
+                                : "bg-gray-300"
+                            }`}
+                          ></div>
+                          <span className="font-semibold text-gray-900 text-base md:text-sm">
+                            {classSession.subjectName}
+                          </span>
+                          <span className="text-sm md:text-xs text-gray-500 bg-white px-2 md:px-1.5 py-1 md:py-0.5 rounded-md md:rounded-sm">
+                            Slot {classSession.slotNumber}
+                          </span>
+                          <span className="badge-info text-sm md:text-xs px-2 md:px-1.5 py-1 md:py-0.5">
+                            {classSession.duration}h
+                          </span>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() =>
+                          handleAttendanceToggle(
+                            classSession.id,
+                            classSession.attended
+                          )
+                        }
+                        disabled={!classSession.canEdit}
+                        className={`flex items-center justify-center w-10 h-10 md:w-8 md:h-8 rounded-lg md:rounded-md border-2 transition-all duration-200 ${
+                          classSession.attended
+                            ? "bg-green-100 border-green-300 text-green-700 hover:bg-green-200"
+                            : "bg-gray-100 border-gray-300 text-gray-500 hover:bg-gray-200"
+                        } ${
+                          classSession.canEdit
+                            ? "hover:border-green-400 cursor-pointer hover:scale-105 hover:shadow-md"
+                            : "opacity-50 cursor-not-allowed"
+                        }`}
+                      >
+                        {classSession.attended ? (
+                          <Check className="w-4 h-4 md:w-3.5 md:h-3.5" />
+                        ) : (
+                          <X className="w-4 h-4 md:w-3.5 md:h-3.5" />
+                        )}
+                      </button>
+                    </div>
+                  )
+                )}
               </div>
             )}
 
-            {daySchedule.classes.length > 0 && (
-              <div className="mt-2 md:mt-3 pt-2 md:pt-3 border-t border-gray-200">
-                <div className="flex justify-between text-xs md:text-sm">
-                  <span className="text-gray-600">
+            {weeklySchedule[selectedDayIndex].schedule.classes.length > 0 && (
+              <div className="mt-4 md:mt-3 pt-4 md:pt-3 border-t border-gray-200">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600 text-sm md:text-xs">
                     Attended:{" "}
-                    {daySchedule.classes.filter((c) => c.attended).length} /{" "}
-                    {daySchedule.classes.length}
+                    {
+                      weeklySchedule[selectedDayIndex].schedule.classes.filter(
+                        (c) => c.attended
+                      ).length
+                    }{" "}
+                    / {weeklySchedule[selectedDayIndex].schedule.classes.length}
                   </span>
                   <span
-                    className={`font-medium ${
-                      daySchedule.classes.filter((c) => c.attended).length ===
-                      daySchedule.classes.length
+                    className={`font-bold text-lg md:text-base ${
+                      weeklySchedule[selectedDayIndex].schedule.classes.filter(
+                        (c) => c.attended
+                      ).length ===
+                      weeklySchedule[selectedDayIndex].schedule.classes.length
                         ? "text-green-600"
-                        : daySchedule.classes.filter((c) => c.attended).length >
+                        : weeklySchedule[
+                            selectedDayIndex
+                          ].schedule.classes.filter((c) => c.attended).length >
                           0
                         ? "text-yellow-600"
                         : "text-red-600"
                     }`}
                   >
-                    {daySchedule.classes.length > 0
+                    {weeklySchedule[selectedDayIndex].schedule.classes.length >
+                    0
                       ? Math.round(
-                          (daySchedule.classes.filter((c) => c.attended)
-                            .length /
-                            daySchedule.classes.length) *
+                          (weeklySchedule[
+                            selectedDayIndex
+                          ].schedule.classes.filter((c) => c.attended).length /
+                            weeklySchedule[selectedDayIndex].schedule.classes
+                              .length) *
                             100
                         )
                       : 0}
@@ -327,7 +411,7 @@ const AttendanceTable: React.FC = () => {
               </div>
             )}
           </div>
-        ))}
+        )}
       </div>
 
       {/* Custom Holiday Modal */}

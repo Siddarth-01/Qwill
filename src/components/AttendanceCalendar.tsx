@@ -228,66 +228,6 @@ const AttendanceCalendar: React.FC = () => {
         minDate={semester.startDate}
         maxDate={semester.endDate}
       />
-
-      <div className="mt-4 p-3 md:p-4 bg-gray-50 rounded-lg md:rounded-xl">
-        <h3 className="font-semibold text-gray-800 text-xs md:text-sm mb-2 md:mb-3 flex items-center gap-2">
-          <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-blue-500 rounded-full"></div>
-          Legend
-        </h3>
-        <div className="grid grid-cols-2 gap-1.5 md:gap-3 text-xs mb-3 md:mb-4">
-          <div className="flex items-center gap-1.5 md:gap-2 p-1.5 md:p-2 bg-white rounded-md md:rounded-lg">
-            <div className="w-3 h-3 md:w-4 md:h-4 bg-gradient-to-br from-green-400 to-green-500 rounded shadow-sm"></div>
-            <span className="font-medium text-gray-700 text-xs md:text-sm">
-              Full
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5 md:gap-2 p-1.5 md:p-2 bg-white rounded-md md:rounded-lg">
-            <div className="w-3 h-3 md:w-4 md:h-4 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded shadow-sm"></div>
-            <span className="font-medium text-gray-700 text-xs md:text-sm">
-              75%+
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5 md:gap-2 p-1.5 md:p-2 bg-white rounded-md md:rounded-lg">
-            <div className="w-3 h-3 md:w-4 md:h-4 bg-gradient-to-br from-orange-400 to-orange-500 rounded shadow-sm"></div>
-            <span className="font-medium text-gray-700 text-xs md:text-sm">
-              Partial
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5 md:gap-2 p-1.5 md:p-2 bg-white rounded-md md:rounded-lg">
-            <div className="w-3 h-3 md:w-4 md:h-4 bg-gradient-to-br from-red-400 to-red-500 rounded shadow-sm"></div>
-            <span className="font-medium text-gray-700 text-xs md:text-sm">
-              None
-            </span>
-          </div>
-
-          <div className="flex items-center gap-1.5 md:gap-2 p-1.5 md:p-2 bg-white rounded-md md:rounded-lg">
-            <div className="w-3 h-3 md:w-4 md:h-4 bg-gradient-to-br from-red-600 to-red-700 rounded shadow-sm"></div>
-            <span className="font-medium text-gray-700 text-xs md:text-sm">
-              Skip All
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5 md:gap-2 p-1.5 md:p-2 bg-white rounded-md md:rounded-lg">
-            <div className="w-3 h-3 md:w-4 md:h-4 bg-gradient-to-br from-gray-300 to-gray-400 rounded shadow-sm"></div>
-            <span className="font-medium text-gray-700 text-xs md:text-sm">
-              Holiday
-            </span>
-          </div>
-        </div>
-
-        <div className="border-t border-gray-200 pt-2 md:pt-3">
-          <div className="flex items-center gap-1.5 md:gap-2 p-1.5 md:p-2 bg-orange-50 rounded-md md:rounded-lg">
-            <div className="relative w-3 h-3 md:w-4 md:h-4 bg-white border border-gray-200 rounded">
-              <div className="absolute top-0 right-0 w-0 h-0 border-l-[8px] md:border-l-[10px] border-l-transparent border-t-[8px] md:border-t-[10px] border-t-orange-500"></div>
-            </div>
-            <span className="font-medium text-gray-700 text-xs md:text-sm">
-              Home Day
-            </span>
-          </div>
-          <p className="text-xs text-gray-600 mt-1.5 md:mt-2 px-1 md:px-2">
-            💡 <strong>Tip:</strong> Right-click to mark as "Home Day"
-          </p>
-        </div>
-      </div>
     </div>
   );
 };

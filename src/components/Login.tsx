@@ -1,6 +1,6 @@
 import React from "react";
 import { useAuth } from "../contexts/AuthContext";
-import { BookOpen, Calendar, TrendingUp } from "lucide-react";
+import { BookOpen, } from "lucide-react";
 
 // Login component for Google authentication
 const Login: React.FC = () => {
@@ -24,39 +24,11 @@ const Login: React.FC = () => {
               <h1 className="text-5xl font-bold text-gray-900 mb-6">
                 <span className="text-gradient">Twill</span>
               </h1>
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                Smart attendance tracking for college students. Never miss the
-                75% requirement again.
-              </p>
+              
 
               <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="bg-blue-100 p-3 rounded-xl">
-                    <Calendar className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">
-                      Smart Calendar
-                    </h3>
-                    <p className="text-gray-600">
-                      Visual tracking with color-coded attendance status
-                    </p>
-                  </div>
-                </div>
+                
 
-                <div className="flex items-start gap-4">
-                  <div className="bg-green-100 p-3 rounded-xl">
-                    <TrendingUp className="w-6 h-6 text-green-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">
-                      Live Analytics
-                    </h3>
-                    <p className="text-gray-600">
-                      Real-time calculations and subject-wise tracking
-                    </p>
-                  </div>
-                </div>
 
                 <div className="flex items-start gap-4">
                   <div className="bg-purple-100 p-3 rounded-xl">
@@ -95,20 +67,7 @@ const Login: React.FC = () => {
               </div>
 
               <div className="space-y-6">
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="bg-blue-100 p-2 rounded-lg">
-                      <TrendingUp className="w-5 h-5 text-blue-600" />
-                    </div>
-                    <h3 className="font-semibold text-blue-900">
-                      75% Attendance Goal
-                    </h3>
-                  </div>
-                  <p className="text-blue-700 text-sm">
-                    Stay on track with smart calculations and predictive
-                    planning
-                  </p>
-                </div>
+                
 
                 <button
                   onClick={handleGoogleSignIn}
@@ -126,11 +85,7 @@ const Login: React.FC = () => {
                 </button>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-gray-200 text-center">
-                <p className="text-sm text-gray-500">
-                  Secure authentication powered by Google
-                </p>
-              </div>
+            
             </div>
           </div>
         </div>

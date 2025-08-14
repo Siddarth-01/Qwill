@@ -262,27 +262,12 @@ const Dashboard: React.FC = () => {
             <AttendanceCalendar />
           </div>
 
-          <div className="card shadow-elegant p-4 md:p-6">
-            <div className="card-header pb-3 md:pb-4 mb-4 md:mb-6">
-              <h2 className="text-lg md:text-2xl font-bold text-gray-900">
-                Weekly Schedule
-              </h2>
-              <p className="text-gray-600 mt-1 text-sm md:text-base">
-                Mark your daily attendance
-              </p>
-            </div>
-            <AttendanceTable />
-          </div>
-        </div>
-
-        {/* Subject-wise Stats and New Section */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-8">
-          <div className="card shadow-elegant p-4 md:p-6">
-            <div className="card-header pb-3 md:pb-4 mb-4 md:mb-6">
-              <h2 className="text-lg md:text-2xl font-bold text-gray-900">
+          <div className="card shadow-elegant p-4 md:p-4">
+            <div className="card-header pb-3 md:pb-3 mb-4 md:mb-4">
+              <h2 className="text-lg md:text-xl font-bold text-gray-900">
                 Subject-wise Attendance
               </h2>
-              <p className="text-gray-600 mt-1 text-sm md:text-base">
+              <p className="text-gray-600 mt-1 text-sm md:text-sm">
                 Track your progress across all subjects
               </p>
             </div>
@@ -290,13 +275,13 @@ const Dashboard: React.FC = () => {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 md:py-4 px-3 md:px-6 font-semibold text-gray-700 bg-gray-50 rounded-tl-lg text-sm md:text-base">
+                    <th className="text-left py-3 md:py-2 px-3 md:px-4 font-semibold text-gray-700 bg-gray-50 rounded-tl-lg text-sm md:text-sm">
                       Subject
                     </th>
-                    <th className="text-center py-3 md:py-4 px-3 md:px-6 font-semibold text-gray-700 bg-gray-50 text-sm md:text-base">
+                    <th className="text-center py-3 md:py-2 px-3 md:px-4 font-semibold text-gray-700 bg-gray-50 text-sm md:text-sm">
                       Attendance
                     </th>
-                    <th className="text-center py-3 md:py-4 px-3 md:px-6 font-semibold text-gray-700 bg-gray-50 rounded-tr-lg text-sm md:text-base">
+                    <th className="text-center py-3 md:py-2 px-3 md:px-4 font-semibold text-gray-700 bg-gray-50 rounded-tr-lg text-sm md:text-sm">
                       Units
                     </th>
                   </tr>
@@ -307,10 +292,10 @@ const Dashboard: React.FC = () => {
                       key={subject.subjectId}
                       className="hover:bg-gray-50/50 transition-colors duration-200"
                     >
-                      <td className="py-3 md:py-4 px-3 md:px-6">
-                        <div className="flex items-center gap-2 md:gap-3">
+                      <td className="py-3 md:py-2 px-3 md:px-4">
+                        <div className="flex items-center gap-2 md:gap-2">
                           <div
-                            className={`w-2 h-2 md:w-3 md:h-3 rounded-full ${
+                            className={`w-2 h-2 md:w-2 md:h-2 rounded-full ${
                               subject.stats.percentage >= 75
                                 ? "bg-green-400"
                                 : subject.stats.percentage >= 60
@@ -318,15 +303,15 @@ const Dashboard: React.FC = () => {
                                 : "bg-red-400"
                             }`}
                           ></div>
-                          <span className="font-semibold text-gray-900 text-sm md:text-base">
+                          <span className="font-semibold text-gray-900 text-sm md:text-sm">
                             {subject.subjectName}
                           </span>
                         </div>
                       </td>
-                      <td className="text-center py-3 md:py-4 px-3 md:px-6">
+                      <td className="text-center py-3 md:py-2 px-3 md:px-4">
                         <div className="flex flex-col items-center gap-1">
                           <span
-                            className={`text-base md:text-lg font-bold ${
+                            className={`text-base md:text-base font-bold ${
                               subject.stats.percentage >= 75
                                 ? "text-green-600"
                                 : subject.stats.percentage >= 60
@@ -336,9 +321,9 @@ const Dashboard: React.FC = () => {
                           >
                             {formatPercentage(subject.stats.percentage)}
                           </span>
-                          <div className="w-12 md:w-16 bg-gray-200 rounded-full h-1.5 md:h-2">
+                          <div className="w-12 md:w-12 bg-gray-200 rounded-full h-1.5 md:h-1.5">
                             <div
-                              className={`h-1.5 md:h-2 rounded-full transition-all duration-300 ${
+                              className={`h-1.5 md:h-1.5 rounded-full transition-all duration-300 ${
                                 subject.stats.percentage >= 75
                                   ? "bg-green-400"
                                   : subject.stats.percentage >= 60
@@ -355,8 +340,8 @@ const Dashboard: React.FC = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="text-center py-3 md:py-4 px-3 md:px-6">
-                        <div className="text-sm">
+                      <td className="text-center py-3 md:py-2 px-3 md:px-4">
+                        <div className="text-sm md:text-sm">
                           <span className="font-semibold text-gray-900">
                             {subject.stats.attendedUnits}
                           </span>
@@ -371,6 +356,21 @@ const Dashboard: React.FC = () => {
                 </tbody>
               </table>
             </div>
+          </div>
+        </div>
+
+        {/* Weekly Schedule and Plan to Skip Section */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-8">
+          <div className="card shadow-elegant p-4 md:p-6">
+            <div className="card-header pb-3 md:pb-4 mb-4 md:mb-6">
+              <h2 className="text-lg md:text-2xl font-bold text-gray-900">
+                Weekly Schedule
+              </h2>
+              <p className="text-gray-600 mt-1 text-sm md:text-base">
+                Mark your daily attendance
+              </p>
+            </div>
+            <AttendanceTable />
           </div>
 
           {/* Plan to Skip Section */}
