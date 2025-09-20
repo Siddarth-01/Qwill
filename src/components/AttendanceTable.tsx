@@ -427,7 +427,7 @@ const AttendanceTable: React.FC = () => {
                           )
                         }
                         disabled={!classSession.canEdit}
-                        className={`flex items-center justify-center w-10 h-10 md:w-8 md:h-8 rounded-lg md:rounded-md border-2 transition-all duration-200 ${
+                        className={`attendance-toggle-btn flex items-center justify-center w-10 h-10 md:w-8 md:h-8 rounded-lg md:rounded-md border-2 transition-all duration-200 ${
                           classSession.attended
                             ? "bg-green-100 border-green-300 text-green-700 hover:bg-green-200"
                             : "bg-gray-100 border-gray-300 text-gray-500 hover:bg-gray-200"

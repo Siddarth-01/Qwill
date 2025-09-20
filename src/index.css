@@ -23,6 +23,12 @@
     background-color: #f8fafc;
     color: #1e293b;
     line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .dark body {
+    background-color: #0a0a0a;
+    color: #f5f5f5;
   }
 
   #root {
@@ -96,6 +102,46 @@
   background: white !important;
   font-family: inherit !important;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Custom Calendar Overrides - Ensure header visibility */
+.attendance-calendar .bg-white.rounded-lg.shadow-sm {
+  display: block !important;
+  visibility: visible !important;
+  position: relative !important;
+}
+
+.attendance-calendar .bg-white.rounded-lg.shadow-sm > div:first-child {
+  display: flex !important;
+  visibility: visible !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0.5rem 1rem !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+.attendance-calendar .bg-white.rounded-lg.shadow-sm h2 {
+  display: block !important;
+  visibility: visible !important;
+  color: #374151 !important;
+  font-size: 1.125rem !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+}
+
+.attendance-calendar .bg-white.rounded-lg.shadow-sm button {
+  display: flex !important;
+  visibility: visible !important;
+  color: #374151 !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0.375rem 0.5rem !important;
+  border-radius: 0.5rem !important;
+  cursor: pointer !important;
+}
+
+.attendance-calendar .bg-white.rounded-lg.shadow-sm button:hover {
+  background-color: #f3f4f6 !important;
 }
 
 .react-calendar__navigation {
@@ -274,4 +320,106 @@
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* Additional Calendar Header Fix */
+.attendance-calendar * {
+  box-sizing: border-box !important;
+}
+
+/* Force calendar header to be visible with specific classes */
+.custom-calendar-container {
+  display: block !important;
+  visibility: visible !important;
+  position: relative !important;
+}
+
+.calendar-header {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: auto !important;
+  min-height: 3rem !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.calendar-title {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: #374151 !important;
+  font-weight: 600 !important;
+  font-size: 1.125rem !important;
+  text-align: center !important;
+}
+
+.calendar-nav-btn {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #374151 !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+}
+
+.calendar-nav-btn:hover {
+  background-color: #f3f4f6 !important;
+}
+
+.calendar-nav-btn svg {
+  display: block !important;
+  width: 1.125rem !important;
+  height: 1.125rem !important;
+}
+
+/* Force calendar header to be visible */
+div[class*="bg-white"][class*="rounded-lg"] div[class*="flex"][class*="items-center"] {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+div[class*="bg-white"][class*="rounded-lg"] div[class*="flex"][class*="items-center"] h2,
+div[class*="bg-white"][class*="rounded-lg"] div[class*="flex"][class*="items-center"] button {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Fix attendance toggle button alignment */
+.attendance-toggle-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  position: relative !important;
+}
+
+.attendance-toggle-btn svg {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  margin: 0 !important;
+  display: block !important;
+  flex-shrink: 0 !important;
+}
+
+.attendance-table button[class*="flex items-center justify-center"] {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.attendance-table button[class*="flex items-center justify-center"] svg {
+  margin: 0 auto !important;
+  display: block !important;
+  flex-shrink: 0 !important;
 }

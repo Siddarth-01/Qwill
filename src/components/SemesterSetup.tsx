@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Plus, Trash2, Calendar, Save } from "lucide-react";
 import { useSemester } from "../contexts/SemesterContext";
+import DarkModeToggle from "./DarkModeToggle";
 import type { Subject, TimeSlot } from "../types";
 
 const predefinedSubjects = [
@@ -162,9 +163,14 @@ const SemesterSetup: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-dark-bg dark:to-dark-surface p-4">
+      {/* Dark mode toggle */}
+      <div className="absolute top-4 right-4 z-10">
+        <DarkModeToggle />
+      </div>
+      
       <div className="max-w-5xl mx-auto">
-        <div className="card shadow-elegant-lg">
+        <div className="bg-white dark:bg-dark-ash rounded-2xl p-8 shadow-xl dark:shadow-2xl border dark:border-dark-border">
           <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-3 mb-4">
               <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-3 rounded-xl">
@@ -174,7 +180,7 @@ const SemesterSetup: React.FC = () => {
                 Setup Your Semester
               </h1>
             </div>
-            <p className="text-gray-600 text-lg">
+            <p className="text-gray-600 dark:text-dark-muted text-lg">
               Configure your semester dates and class timetable to start
               tracking
             </p>

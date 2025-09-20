@@ -106,16 +106,16 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
   const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 custom-calendar-container">
       {/* Header */}
-      <div className="flex items-center justify-between p-2 md:p-4 border-b border-gray-200">
+      <div className="calendar-header flex items-center justify-between p-2 md:p-4 border-b border-gray-200">
         <button
           onClick={() => navigateMonth("prev")}
-          className="p-1.5 md:p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="calendar-nav-btn p-1.5 md:p-2 hover:bg-gray-100 rounded-lg transition-colors"
         >
           <ChevronLeft size={18} className="md:w-5 md:h-5" />
         </button>
-        <h2 className="text-base md:text-lg font-semibold">
+        <h2 className="calendar-title text-base md:text-lg font-semibold">
           {currentDate.toLocaleDateString("en-US", {
             year: "numeric",
             month: "long",
@@ -123,7 +123,7 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
         </h2>
         <button
           onClick={() => navigateMonth("next")}
-          className="p-1.5 md:p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="calendar-nav-btn p-1.5 md:p-2 hover:bg-gray-100 rounded-lg transition-colors"
         >
           <ChevronRight size={18} className="md:w-5 md:h-5" />
         </button>
