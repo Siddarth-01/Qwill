@@ -91,6 +91,7 @@ const SemesterSetup: React.FC = () => {
         subjects,
         holidays: [],
         customHolidays: [],
+        excludedAutoHolidays: [],
       });
     } catch (error) {
       console.error("Failed to create semester:", error);

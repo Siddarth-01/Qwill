@@ -8,7 +8,11 @@ import {
   Trash2,
 } from "lucide-react";
 import { useSemester } from "../contexts/SemesterContext";
-import { formatDate } from "../utils/attendanceUtils";
+import {
+  formatDate,
+  isSecondOrFourthSaturday,
+  isWeekend,
+} from "../utils/attendanceUtils";
 
 const AttendanceTable: React.FC = () => {
   const {
@@ -16,6 +20,8 @@ const AttendanceTable: React.FC = () => {
     updateAttendance,
     addCustomHoliday,
     removeCustomHoliday,
+    removeAutoHoliday,
+    restoreAutoHoliday,
     semester,
   } = useSemester();
   const [currentWeekOffset, setCurrentWeekOffset] = useState(0);
@@ -127,6 +133,34 @@ const AttendanceTable: React.FC = () => {
         (h) => h.date.toDateString() === date.toDateString()
       ) || false
     );
+  };
+
+  const isAutoHoliday = (date: Date) => {
+    return isWeekend(date) || isSecondOrFourthSaturday(date);
+  };
+
+  const isExcludedAutoHoliday = (date: Date) => {
+    return (
+      semester?.excludedAutoHolidays?.some(
+        (h) => h.toDateString() === date.toDateString()
+      ) || false
+    );
+  };
+
+  const handleRemoveAutoHoliday = async (date: Date) => {
+    try {
+      await removeAutoHoliday(date);
+    } catch (error) {
+      console.error("Failed to remove auto holiday:", error);
+    }
+  };
+
+  const handleRestoreAutoHoliday = async (date: Date) => {
+    try {
+      await restoreAutoHoliday(date);
+    } catch (error) {
+      console.error("Failed to restore auto holiday:", error);
+    }
   };
 
   return (
@@ -271,6 +305,7 @@ const AttendanceTable: React.FC = () => {
                       {weeklySchedule[selectedDayIndex].schedule.holidayName ||
                         "Holiday"}
                     </span>
+                    {/* Show delete button for custom holidays */}
                     {isCustomHoliday(weeklySchedule[selectedDayIndex].date) && (
                       <button
                         onClick={() =>
@@ -284,18 +319,69 @@ const AttendanceTable: React.FC = () => {
                         <Trash2 className="w-4 h-4 md:w-3.5 md:h-3.5" />
                       </button>
                     )}
+                    {/* Show delete button for 2nd/4th Saturday holidays */}
+                    {isSecondOrFourthSaturday(
+                      weeklySchedule[selectedDayIndex].date
+                    ) &&
+                      !isExcludedAutoHoliday(
+                        weeklySchedule[selectedDayIndex].date
+                      ) && (
+                        <button
+                          onClick={() =>
+                            handleRemoveAutoHoliday(
+                              weeklySchedule[selectedDayIndex].date
+                            )
+                          }
+                          className="p-2 md:p-1.5 text-orange-500 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition-all duration-200"
+                          title="Remove 2nd/4th Saturday holiday"
+                        >
+                          <Trash2 className="w-4 h-4 md:w-3.5 md:h-3.5" />
+                        </button>
+                      )}
                   </>
                 ) : (
-                  <button
-                    onClick={() =>
-                      handleMarkAsHoliday(weeklySchedule[selectedDayIndex].date)
-                    }
-                    className="flex items-center gap-2 md:gap-1.5 px-3 md:px-2 py-1.5 md:py-1 text-sm md:text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-all duration-200"
-                    title="Mark as custom holiday"
-                  >
-                    <Calendar className="w-4 h-4 md:w-3.5 md:h-3.5" />
-                    <span>Mark Holiday</span>
-                  </button>
+                  <>
+                    {/* Show restore button for excluded auto holidays */}
+                    {(isSecondOrFourthSaturday(
+                      weeklySchedule[selectedDayIndex].date
+                    ) ||
+                      isWeekend(weeklySchedule[selectedDayIndex].date)) &&
+                      isExcludedAutoHoliday(
+                        weeklySchedule[selectedDayIndex].date
+                      ) && (
+                        <button
+                          onClick={() =>
+                            handleRestoreAutoHoliday(
+                              weeklySchedule[selectedDayIndex].date
+                            )
+                          }
+                          className="flex items-center gap-2 md:gap-1.5 px-3 md:px-2 py-1.5 md:py-1 text-sm md:text-xs text-orange-600 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition-all duration-200"
+                          title="Restore auto holiday"
+                        >
+                          <Calendar className="w-4 h-4 md:w-3.5 md:h-3.5" />
+                          <span>Restore Holiday</span>
+                        </button>
+                      )}
+                    {/* Show mark holiday button for regular days */}
+                    {!(
+                      isSecondOrFourthSaturday(
+                        weeklySchedule[selectedDayIndex].date
+                      ) || isWeekend(weeklySchedule[selectedDayIndex].date)
+                    ) && (
+                      <button
+                        onClick={() =>
+                          handleMarkAsHoliday(
+                            weeklySchedule[selectedDayIndex].date
+                          )
+                        }
+                        className="flex items-center gap-2 md:gap-1.5 px-3 md:px-2 py-1.5 md:py-1 text-sm md:text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                        title="Mark as custom holiday"
+                      >
+                        <Calendar className="w-4 h-4 md:w-3.5 md:h-3.5" />
+                        <span>Mark Holiday</span>
+                      </button>
+                    )}
+                  </>
                 )}
               </div>
             </div>

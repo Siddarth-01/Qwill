@@ -26,6 +26,8 @@ interface SemesterContextType {
   ) => Promise<void>;
   addCustomHoliday: (holiday: Omit<CustomHoliday, "id">) => Promise<void>;
   removeCustomHoliday: (holidayId: string) => Promise<void>;
+  removeAutoHoliday: (date: Date) => Promise<void>; // New function to remove auto-generated holidays
+  restoreAutoHoliday: (date: Date) => Promise<void>; // New function to restore auto-generated holidays
   toggleHomeDay: (date: Date) => Promise<void>; // New function for home days
   refreshSchedule: () => void;
 }
@@ -90,6 +92,8 @@ export const SemesterProvider: React.FC<SemesterProviderProps> = ({
               ...h,
               date: h.date.toDate(),
             })) || [],
+          excludedAutoHolidays:
+            data.excludedAutoHolidays?.map((h: any) => h.toDate()) || [],
         });
       }
       setLoading(false);
@@ -139,7 +143,8 @@ export const SemesterProvider: React.FC<SemesterProviderProps> = ({
       semester.startDate,
       semester.endDate,
       semester.subjects,
-      allHolidays
+      allHolidays,
+      semester.excludedAutoHolidays || []
     );
 
     // Apply attendance data, planned skips, and home days
@@ -294,6 +299,50 @@ export const SemesterProvider: React.FC<SemesterProviderProps> = ({
     await updateDoc(semesterDocRef, { customHolidays: updatedHolidays });
   };
 
+  const removeAutoHoliday = async (date: Date) => {
+    if (!user || !semester)
+      throw new Error("User not authenticated or no semester");
+
+    const existingExcluded = semester.excludedAutoHolidays || [];
+
+    // Check if already excluded to avoid duplicates
+    const isAlreadyExcluded = existingExcluded.some(
+      (excludedDate) =>
+        excludedDate.getFullYear() === date.getFullYear() &&
+        excludedDate.getMonth() === date.getMonth() &&
+        excludedDate.getDate() === date.getDate()
+    );
+
+    if (!isAlreadyExcluded) {
+      const updatedExcluded = [...existingExcluded, date];
+
+      const semesterDocRef = doc(db, "semesters", user.uid);
+      await updateDoc(semesterDocRef, {
+        excludedAutoHolidays: updatedExcluded.map((d) => Timestamp.fromDate(d)),
+      });
+    }
+  };
+
+  const restoreAutoHoliday = async (date: Date) => {
+    if (!user || !semester)
+      throw new Error("User not authenticated or no semester");
+
+    const existingExcluded = semester.excludedAutoHolidays || [];
+    const updatedExcluded = existingExcluded.filter(
+      (excludedDate) =>
+        !(
+          excludedDate.getFullYear() === date.getFullYear() &&
+          excludedDate.getMonth() === date.getMonth() &&
+          excludedDate.getDate() === date.getDate()
+        )
+    );
+
+    const semesterDocRef = doc(db, "semesters", user.uid);
+    await updateDoc(semesterDocRef, {
+      excludedAutoHolidays: updatedExcluded.map((d) => Timestamp.fromDate(d)),
+    });
+  };
+
   const toggleHomeDay = async (date: Date) => {
     if (!user) throw new Error("User not authenticated");
 
@@ -324,6 +373,8 @@ export const SemesterProvider: React.FC<SemesterProviderProps> = ({
     updateMultiplePlannedSkips,
     addCustomHoliday,
     removeCustomHoliday,
+    removeAutoHoliday,
+    restoreAutoHoliday,
     toggleHomeDay,
     refreshSchedule,
   };

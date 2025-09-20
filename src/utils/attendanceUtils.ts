@@ -18,30 +18,48 @@ export const isSecondOrFourthSaturday = (date: Date): boolean => {
   return weekOfMonth === 2 || weekOfMonth === 4;
 };
 
-export const isHoliday = (date: Date, holidays: Date[]): boolean => {
+export const isHoliday = (
+  date: Date,
+  holidays: Date[],
+  excludedAutoHolidays: Date[] = []
+): boolean => {
+  // Check if this auto-generated holiday has been excluded
+  const isExcludedAutoHoliday = excludedAutoHolidays.some(
+    (excluded) =>
+      excluded.getFullYear() === date.getFullYear() &&
+      excluded.getMonth() === date.getMonth() &&
+      excluded.getDate() === date.getDate()
+  );
+
+  const isAutoHoliday = isWeekend(date) || isSecondOrFourthSaturday(date);
+
+  // If it's an auto-holiday but has been excluded, don't treat as holiday
+  if (isAutoHoliday && isExcludedAutoHoliday) {
+    return false;
+  }
+
   return (
     holidays.some(
       (holiday) =>
         holiday.getFullYear() === date.getFullYear() &&
         holiday.getMonth() === date.getMonth() &&
         holiday.getDate() === date.getDate()
-    ) ||
-    isWeekend(date) ||
-    isSecondOrFourthSaturday(date)
+    ) || isAutoHoliday
   );
 };
 
 export const generateDaySchedule = (
   date: Date,
   subjects: Subject[],
-  holidays: Date[]
+  holidays: Date[],
+  excludedAutoHolidays: Date[] = []
 ): DaySchedule => {
   const dayName = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"][
     date.getDay()
   ];
   const classes: ClassSession[] = [];
 
-  if (isHoliday(date, holidays)) {
+  if (isHoliday(date, holidays, excludedAutoHolidays)) {
     return {
       date,
       classes: [],
@@ -125,14 +143,20 @@ export const generateScheduleForPeriod = (
   startDate: Date,
   endDate: Date,
   subjects: Subject[],
-  holidays: Date[]
+  holidays: Date[],
+  excludedAutoHolidays: Date[] = []
 ): DaySchedule[] => {
   const schedule: DaySchedule[] = [];
   const currentDate = new Date(startDate);
 
   while (currentDate <= endDate) {
     schedule.push(
-      generateDaySchedule(new Date(currentDate), subjects, holidays)
+      generateDaySchedule(
+        new Date(currentDate),
+        subjects,
+        holidays,
+        excludedAutoHolidays
+      )
     );
     currentDate.setDate(currentDate.getDate() + 1);
   }

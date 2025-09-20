@@ -24,6 +24,7 @@ export interface Semester {
   subjects: Subject[];
   holidays: Date[];
   customHolidays: CustomHoliday[];
+  excludedAutoHolidays: Date[]; // New field to track excluded auto-generated holidays
 }
 
 export interface CustomHoliday {
