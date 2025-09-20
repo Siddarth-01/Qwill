@@ -135,10 +135,6 @@ const AttendanceTable: React.FC = () => {
     );
   };
 
-  const isAutoHoliday = (date: Date) => {
-    return isWeekend(date) || isSecondOrFourthSaturday(date);
-  };
-
   const isExcludedAutoHoliday = (date: Date) => {
     return (
       semester?.excludedAutoHolidays?.some(
